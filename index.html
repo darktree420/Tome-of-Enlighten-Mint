@@ -20,17 +20,23 @@
     }
 
     #book {
-      background: url('images/closed_book.png') no-repeat center center;
-      background-size: cover;
-      width: 600px;
-      height: 400px;
-      position: relative;
-      box-shadow: 0 0 30px rgba(0, 255, 127, 0.5);
-      border: 5px double #3aff80;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
+	background: url('images/closed_book.png') no-repeat center center;
+	background-size: cover;
+	width: 600px;
+	height: 400px;
+	position: relative;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: box-shadow 0.3s ease, border 0.3s ease;
+	border: none;
+	box-shadow: none;
+	}
+#book.opened {
+  background: url('images/open_book.png') no-repeat center center;
+  background-size: cover;
+  border: 5px double #3aff80;
+  box-shadow: 0 0 30px rgba(0, 255, 127, 0.5);
+}
     #page-content {
       display: none;
       position: absolute;
@@ -68,19 +74,24 @@
       padding: 8px;
     }
 
-    button {
-      padding: 10px 15px;
-      font-size: 14px;
-      background-color: #3aff80;
-      color: #0d0f0d;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #2ae069;
-    }
+   button {
+  padding: 8px 12px;
+  font-size: 13px;
+  background: linear-gradient(to bottom, #3aff80, #1c7f46);
+  color: #061006;
+  border: 2px solid #1c7f46;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: 'Georgia', serif;
+  text-shadow: 0 0 3px #b2ffc2;
+  box-shadow: 0 0 5px rgba(0,255,127,0.3);
+  transition: all 0.2s ease-in-out;
+}
+button:hover {
+  background: linear-gradient(to bottom, #2ae069, #145a33);
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(0,255,127,0.6);
+}
   </style>
 </head>
 <body>
@@ -123,13 +134,13 @@
     }
 
     function openTome() {
-      if (isOpen) return;
-      isOpen = true;
-      book.style.background = "url('images/open_book.png') no-repeat center center";
-      pageContent.style.display = "block";
-      controls.style.display = "flex";
-      renderPage(currentPage);
-    }
+  if (isOpen) return;
+  isOpen = true;
+  book.classList.add("opened");
+  pageContent.style.display = "block";
+  controls.style.display = "flex";
+  renderPage(currentPage);
+}
 
     function addEntry() {
       const question = entryInput.value.trim();
