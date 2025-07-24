@@ -95,7 +95,7 @@ button:hover {
   </style>
 </head>
 <body>
-  <h1 id="tome-heading">The mysterious tome sits before you, the faint smell of mint hangs in the air. Do you dare to open the tome?</h1>
+<h1 id="tomeHeading">The mysterious tome sits before you, the faint smell of mint hangs in the air. Do you dare to open the tome?</h1>
 
   <div id="book" onclick="openTome()" ondragover="event.preventDefault()" ondrop="handleDrop(event)">
     <div id="page-content"></div>
@@ -113,6 +113,7 @@ button:hover {
 	<input type="file" id="pageImageInput" accept="image/*" style="display: none;" />
 
   </div>
+<div id="pageDescription" style="display: none; max-width: 800px; padding: 20px; color: #d2f5ce; font-family: Georgia, serif; font-size: 16px; text-align: center;"></div>
 
   <script>
     const book = document.getElementById("book");
@@ -126,13 +127,35 @@ button:hover {
     let isOpen = false;
 
     function renderPage(index) {
-      if (entries.length === 0) {
-        pageContent.textContent = "The pages rustle quietly, waiting for a question...";
-      } else {
-        const entry = entries[index];
-        pageContent.textContent = `Page ${index + 1} of ${entries.length}\n\nQ: ${entry.question}\n\n${entry.answer || ''}`;
-      }
+  const heading = document.getElementById("tomeHeading");
+  const desc = document.getElementById("pageDescription");
+
+  if (entries.length === 0) {
+    heading.textContent = "The pages rustle quietly, waiting for a question...";
+    pageContent.innerHTML = "";
+    desc.style.display = "none";
+  } else {
+    const entry = entries[index];
+    const trimmedQuestion = entry.question.length > 60 
+      ? entry.question.slice(0, 57) + "..." 
+      : entry.question;
+
+    heading.textContent = `The Tome reveals: "${trimmedQuestion}" — Page ${index + 1} of ${entries.length}`;
+    
+    // Move answer to external area instead of overlay
+    if (entry.answer && entry.answer.includes("<img")) {
+      pageContent.innerHTML = entry.answer;
+    } else {
+      pageContent.innerHTML = "";
     }
+
+    desc.style.display = "block";
+    desc.innerHTML = entry.answer && !entry.answer.includes("<img") 
+      ? entry.answer 
+      : "The image on this page seems to convey more than words can express...";
+  }
+}
+
 
    const heading = document.getElementById('tome-heading');
 
