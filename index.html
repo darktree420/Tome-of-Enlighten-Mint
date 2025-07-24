@@ -37,21 +37,7 @@
   border: 5px double #3aff80;
   box-shadow: 0 0 30px rgba(0, 255, 127, 0.5);
 }
-    #page-content {
-      display: none;
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      right: 20px;
-      bottom: 20px;
-      background-color: rgba(0, 30, 0, 0.35);
-      padding: 12px;
-      overflow-y: auto;
-      font-size: 16px;
-      white-space: pre-wrap;
-      border-radius: 6px;
-      box-shadow: inset 0 0 10px rgba(0,255,127,0.2);
-    }
+  
 
     #controls {
       margin-top: 20px;
@@ -75,8 +61,8 @@
     }
 
    button {
-  padding: 8px 12px;
-  font-size: 13px;
+  padding: 6px 8px;
+  font-size: 8px;
   background: linear-gradient(to bottom, #3aff80, #1c7f46);
   color: #061006;
   border: 2px solid #1c7f46;
@@ -92,13 +78,84 @@ button:hover {
   transform: scale(1.05);
   box-shadow: 0 0 10px rgba(0,255,127,0.6);
 }
+
+#book.opened {
+  background: url('images/leafy_frame.png') no-repeat center center;
+  background-size: contain;
+  width: 1000px;
+  height: 600px;
+}
+
+#page-frame {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 40px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.page {
+  width: 48%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color: rgba(15, 30, 15, 0.65);
+  padding: 15px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: inset 0 0 10px rgba(0, 255, 127, 0.2);
+}
+
+#page-question {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+#page-prompt {
+  font-size: 1em;
+  white-space: pre-wrap;
+}
+
+#page-image {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  box-shadow: 0 0 15px rgba(60, 255, 130, 0.2);
+}
+
+/* Mobile: stack pages vertically */
+@media (max-width: 768px) {
+  #book.opened {
+    width: 100%;
+    height: auto;
+    background: none;
+    box-shadow: none;
+    border: none;
+  }
+
+  #page-frame {
+    flex-direction: column;
+    gap: 20px;
+    padding: 10px;
+  }
+
+  .page {
+    width: 100%;
+    background-color: rgba(10, 20, 10, 0.7);
+  }
+}
+
   </style>
 </head>
 <body>
 <h1 id="tomeHeading">The mysterious tome sits before you, the faint smell of mint hangs in the air. Do you dare to open the tome?</h1>
 
   <div id="book" onclick="openTome()" ondragover="event.preventDefault()" ondrop="handleDrop(event)">
-    <div id="page-content"></div>
+
   </div>
   <div id="controls">
     <textarea id="entryInput" placeholder="Ask the Tome a question..."></textarea>
@@ -126,35 +183,26 @@ button:hover {
     let currentPage = 0;
     let isOpen = false;
 
-    function renderPage(index) {
-  const heading = document.getElementById("tomeHeading");
-  const desc = document.getElementById("pageDescription");
+ function renderPage(index) {
+  const questionEl = document.getElementById("page-question");
+  const promptEl = document.getElementById("page-prompt");
+  const imageEl = document.getElementById("page-image");
+  const entry = entries[index];
 
-  if (entries.length === 0) {
-    heading.textContent = "The pages rustle quietly, waiting for a question...";
-    pageContent.innerHTML = "";
-    desc.style.display = "none";
-  } else {
-    const entry = entries[index];
-    const trimmedQuestion = entry.question.length > 60 
-      ? entry.question.slice(0, 57) + "..." 
-      : entry.question;
-
-    heading.textContent = `The Tome reveals: "${trimmedQuestion}" — Page ${index + 1} of ${entries.length}`;
-    
-    // Move answer to external area instead of overlay
-    if (entry.answer && entry.answer.includes("<img")) {
-      pageContent.innerHTML = entry.answer;
-    } else {
-      pageContent.innerHTML = "";
-    }
-
-    desc.style.display = "block";
-    desc.innerHTML = entry.answer && !entry.answer.includes("<img") 
-      ? entry.answer 
-      : "The image on this page seems to convey more than words can express...";
+  if (!entry) {
+    questionEl.textContent = "";
+    promptEl.textContent = "";
+    imageEl.src = "";
+    document.title = "The pages rustle quietly, waiting for a question...";
+    return;
   }
+
+  questionEl.textContent = entry.question || "(Untitled Question)";
+  promptEl.textContent = entry.answer || "";
+  imageEl.src = entry.image || "";
+  document.title = `The Tome shows this beautifully rendered image of "${entry.question}" — Page ${index + 1} of ${entries.length}`;
 }
+
 
 
    const heading = document.getElementById('tome-heading');
@@ -163,7 +211,6 @@ function openTome() {
   if (isOpen) return;
   isOpen = true;
   book.classList.add("opened");
-  pageContent.style.display = "block";
   controls.style.display = "flex";
 
   // Update the heading
