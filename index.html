@@ -121,7 +121,7 @@
     function openTome() {
       if (isOpen) return;
       isOpen = true;
-      book.style.backgroundImage = "url('images/open_book.png')";
+      book.style.background = "url('images/open_book.png') no-repeat center center";
       pageContent.style.display = "block";
       controls.style.display = "flex";
       renderPage(currentPage);
