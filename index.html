@@ -245,9 +245,13 @@
         renderPage(currentPage);
       }
     });
-    book.addEventListener("click", openTome);
+    
+window.addEventListener("DOMContentLoaded", () => {
+  const book = document.getElementById("book");
+  book.addEventListener("click", openTome);
   book.addEventListener("touchstart", openTome);
   book.addEventListener("pointerdown", openTome);
+});
 </script>
 </body>
 </html>
