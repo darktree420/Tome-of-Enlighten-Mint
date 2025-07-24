@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tome of Enlighten-Mint</title>
-  <link rel="icon" type="image/png" href="book_icon.png">
+  <link rel="icon" type="image/png" href="images/book_icon.png">
   <style>
     body {
       background: radial-gradient(circle at center, #1b1f1b, #0d0f0d);
@@ -20,7 +20,7 @@
     }
 
     #book {
-      background: url('closed_book.png') no-repeat center center;
+      background: url('images/closed_book.png') no-repeat center center;
       background-size: cover;
       width: 600px;
       height: 400px;
@@ -85,7 +85,7 @@
 </head>
 <body>
   <h1>The Tome of Enlighten-Mint</h1>
-  <div id="book" onclick="openTome()">
+  <div id="book" onclick="openTome()" ondragover="event.preventDefault()" ondrop="handleDrop(event)">
     <div id="page-content"></div>
   </div>
   <div id="controls">
@@ -121,7 +121,7 @@
     function openTome() {
       if (isOpen) return;
       isOpen = true;
-      book.style.backgroundImage = "url('open_book.png')";
+      book.style.backgroundImage = "url('images/open_book.png')";
       pageContent.style.display = "block";
       controls.style.display = "flex";
       renderPage(currentPage);
@@ -184,6 +184,28 @@
       };
       reader.readAsText(file);
     });
+
+    function handleDrop(event) {
+      event.preventDefault();
+      const file = event.dataTransfer.files[0];
+      if (file && file.type === "application/json") {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            entries = JSON.parse(e.target.result);
+            currentPage = 0;
+            localStorage.setItem("tomeEntries", JSON.stringify(entries));
+            renderPage(currentPage);
+            if (!isOpen) openTome();
+          } catch (err) {
+            alert("Dropped file was not valid JSON.");
+          }
+        };
+        reader.readAsText(file);
+      } else {
+        alert("Only JSON files are accepted for drag-and-drop import.");
+      }
+    }
 
     document.addEventListener("keydown", (e) => {
       if (!isOpen || entries.length === 0) return;
