@@ -22,8 +22,8 @@
     #book {
 	background: url('images/closed_book.png') no-repeat center center;
 	background-size: cover;
-	width: 1024px;
-	height: 1024px;
+	width: 640px;
+	height: 640px;
 	position: relative;
 	border-radius: 8px;
 	cursor: pointer;
@@ -95,7 +95,8 @@ button:hover {
   </style>
 </head>
 <body>
-  <h1>The Tome of Enlighten-Mint</h1>
+  <h1 id="tome-heading">The mysterious tome sits before you, the faint smell of mint hangs in the air. Do you dare to open the tome?</h1>
+
   <div id="book" onclick="openTome()" ondragover="event.preventDefault()" ondrop="handleDrop(event)">
     <div id="page-content"></div>
   </div>
@@ -133,14 +134,30 @@ button:hover {
       }
     }
 
-    function openTome() {
+   const heading = document.getElementById('tome-heading');
+
+function openTome() {
   if (isOpen) return;
   isOpen = true;
   book.classList.add("opened");
   pageContent.style.display = "block";
   controls.style.display = "flex";
+
+  // Update the heading
+  updateTomeHeading();
+
   renderPage(currentPage);
 }
+function updateTomeHeading() {
+  if (!entries.length || !entries[currentPage]) {
+    heading.textContent = "The pages rustle quietly, waiting for a question...";
+  } else if (entries[currentPage].image) {
+    heading.textContent = "The Tome shows this beautifully rendered image.";
+  } else {
+    heading.textContent = "The pages rustle quietly, waiting for a question...";
+  }
+}
+
 
     function addEntry() {
       const question = entryInput.value.trim();
@@ -155,6 +172,8 @@ button:hover {
         localStorage.setItem("tomeEntries", JSON.stringify(entries));
         renderPage(currentPage);
         entryInput.value = "";
+		updateTomeHeading();
+
       }
     }
 
@@ -169,6 +188,8 @@ button:hover {
         entries = JSON.parse(stored);
         currentPage = 0;
         renderPage(currentPage);
+		updateTomeHeading();
+
       }
     }
 
@@ -240,6 +261,8 @@ button:hover {
     currentPage = entries.length - 1;
     localStorage.setItem("tomeEntries", JSON.stringify(entries));
     renderPage(currentPage);
+	updateTomeHeading();
+
 	};
 	reader.readAsDataURL(file);
 	});
@@ -252,6 +275,8 @@ button:hover {
 	currentPage = Math.max(0, currentPage - 1);
 	localStorage.setItem("tomeEntries", JSON.stringify(entries));
 	renderPage(currentPage);
+	updateTomeHeading();
+
 }
 
     document.addEventListener("keydown", (e) => {
@@ -262,6 +287,8 @@ button:hover {
       } else if (e.key === "ArrowRight") {
         currentPage = Math.min(entries.length - 1, currentPage + 1);
         renderPage(currentPage);
+		updateTomeHeading();
+
       }
     });
   </script>
