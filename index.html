@@ -114,14 +114,14 @@
         pageContent.textContent = "The pages rustle quietly, waiting for a question...";
       } else {
         const entry = entries[index];
-        pageContent.innerHTML = `<strong>Page ${index + 1} of ${entries.length}</strong><br><br><strong>Q:</strong> ${entry.question}<br><br>${entry.answer || ''}`;
+        pageContent.textContent = `Page ${index + 1} of ${entries.length}\n\nQ: ${entry.question}\n\n${entry.answer || ''}`;
       }
     }
 
     function openTome() {
       if (isOpen) return;
       isOpen = true;
-      book.style.background = "url('images/open_book.png') no-repeat center center";
+      book.style.backgroundImage = "url('images/open_book.png')";
       pageContent.style.display = "block";
       controls.style.display = "flex";
       renderPage(currentPage);
@@ -186,46 +186,18 @@
     });
 
     function handleDrop(event) {
-  event.preventDefault();
-  const file = event.dataTransfer.files[0];
-
-  if (!file) return;
-
-  if (file.type === "application/json") {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      try {
-        entries = JSON.parse(e.target.result);
-        currentPage = 0;
-        localStorage.setItem("tomeEntries", JSON.stringify(entries));
-        renderPage(currentPage);
-        if (!isOpen) openTome();
-      } catch (err) {
-        alert("Dropped file was not valid JSON.");
-      }
-    };
-    reader.readAsText(file);
-  } else if (file.type.startsWith("image/")) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const imageDataUrl = e.target.result;
-      if (!isOpen) openTome();
-
-      const entry = {
-        question: "[Image Entry]",
-        answer: `<img src='${imageDataUrl}' alt='Dropped Image' style='max-width:100%; border-radius: 4px;'>`,
-        date: new Date().toISOString()
-      };
-      entries.push(entry);
-      currentPage = entries.length - 1;
-      localStorage.setItem("tomeEntries", JSON.stringify(entries));
-      renderPage(currentPage);
-    };
-    reader.readAsDataURL(file);
-  } else {
-    alert("Only JSON or image files are accepted for drag-and-drop import.");
-  }
-} catch (err) {
+      event.preventDefault();
+      const file = event.dataTransfer.files[0];
+      if (file && file.type === "application/json") {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            entries = JSON.parse(e.target.result);
+            currentPage = 0;
+            localStorage.setItem("tomeEntries", JSON.stringify(entries));
+            renderPage(currentPage);
+            if (!isOpen) openTome();
+          } catch (err) {
             alert("Dropped file was not valid JSON.");
           }
         };
