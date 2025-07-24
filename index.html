@@ -85,7 +85,7 @@
 </head>
 <body>
   <h1>The Tome of Enlighten-Mint</h1>
-  <div id="book" onclick="openTome()" ondragover="event.preventDefault()" ondrop="handleDrop(event)">
+  <div id="book" ondragover="event.preventDefault()" ondrop="handleDrop(event)">
     <div id="page-content"></div>
   </div>
   <div id="controls">
@@ -245,6 +245,9 @@
         renderPage(currentPage);
       }
     });
-  </script>
+    book.addEventListener("click", openTome);
+  book.addEventListener("touchstart", openTome);
+  book.addEventListener("pointerdown", openTome);
+</script>
 </body>
 </html>
