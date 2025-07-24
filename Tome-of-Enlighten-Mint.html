@@ -4,10 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tome of Enlighten-Mint</title>
+  <link rel="icon" type="image/png" href="book_icon.png">
   <style>
     body {
-      background-color: #121212;
-      color: #eee;
+      background: radial-gradient(circle at center, #1b1f1b, #0d0f0d);
+      color: #d2f5ce;
       font-family: 'Georgia', serif;
       margin: 0;
       padding: 0;
@@ -19,31 +20,36 @@
     }
 
     #book {
-      background: url('https://i.imgur.com/JjK6wVO.jpg') no-repeat center center; /* Placeholder image */
+      background: url('closed_book.png') no-repeat center center;
       background-size: cover;
       width: 600px;
       height: 400px;
       position: relative;
-      box-shadow: 0 0 20px rgba(0, 255, 127, 0.4);
-      border: 4px solid #4caf50;
+      box-shadow: 0 0 30px rgba(0, 255, 127, 0.5);
+      border: 5px double #3aff80;
+      border-radius: 8px;
+      cursor: pointer;
     }
 
     #page-content {
+      display: none;
       position: absolute;
       top: 20px;
       left: 20px;
       right: 20px;
       bottom: 20px;
-      background-color: rgba(255, 255, 255, 0.05);
-      padding: 10px;
+      background-color: rgba(0, 30, 0, 0.35);
+      padding: 12px;
       overflow-y: auto;
       font-size: 16px;
       white-space: pre-wrap;
+      border-radius: 6px;
+      box-shadow: inset 0 0 10px rgba(0,255,127,0.2);
     }
 
     #controls {
       margin-top: 20px;
-      display: flex;
+      display: none;
       flex-wrap: wrap;
       gap: 10px;
       justify-content: center;
@@ -55,25 +61,31 @@
       resize: none;
       font-family: 'Georgia', serif;
       font-size: 14px;
+      background-color: #1f2d1f;
+      color: #d2f5ce;
+      border: 1px solid #3aff80;
+      border-radius: 4px;
+      padding: 8px;
     }
 
     button {
       padding: 10px 15px;
       font-size: 14px;
-      background-color: #4caf50;
-      color: white;
+      background-color: #3aff80;
+      color: #0d0f0d;
       border: none;
+      border-radius: 4px;
       cursor: pointer;
     }
 
     button:hover {
-      background-color: #45a049;
+      background-color: #2ae069;
     }
   </style>
 </head>
 <body>
   <h1>The Tome of Enlighten-Mint</h1>
-  <div id="book">
+  <div id="book" onclick="openTome()">
     <div id="page-content"></div>
   </div>
   <div id="controls">
@@ -87,12 +99,15 @@
   </div>
 
   <script>
+    const book = document.getElementById("book");
     const pageContent = document.getElementById("page-content");
     const entryInput = document.getElementById("entryInput");
     const importInput = document.getElementById("importInput");
+    const controls = document.getElementById("controls");
 
     let entries = JSON.parse(localStorage.getItem("tomeEntries") || "[]");
     let currentPage = 0;
+    let isOpen = false;
 
     function renderPage(index) {
       if (entries.length === 0) {
@@ -101,6 +116,15 @@
         const entry = entries[index];
         pageContent.textContent = `Page ${index + 1} of ${entries.length}\n\nQ: ${entry.question}\n\n${entry.answer || ''}`;
       }
+    }
+
+    function openTome() {
+      if (isOpen) return;
+      isOpen = true;
+      book.style.backgroundImage = "url('open_book.png')";
+      pageContent.style.display = "block";
+      controls.style.display = "flex";
+      renderPage(currentPage);
     }
 
     function addEntry() {
@@ -162,7 +186,7 @@
     });
 
     document.addEventListener("keydown", (e) => {
-      if (entries.length === 0) return;
+      if (!isOpen || entries.length === 0) return;
       if (e.key === "ArrowLeft") {
         currentPage = Math.max(0, currentPage - 1);
         renderPage(currentPage);
@@ -171,8 +195,6 @@
         renderPage(currentPage);
       }
     });
-
-    renderPage(currentPage);
   </script>
 </body>
 </html>

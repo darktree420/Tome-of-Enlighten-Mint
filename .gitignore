@@ -1,0 +1,12 @@
+# System files
+.DS_Store
+Thumbs.db
+
+# Node/React (future use)
+node_modules/
+dist/
+build/
+
+# Optional logs or temp
+*.log
+*.blend1
