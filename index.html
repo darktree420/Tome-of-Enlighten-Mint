@@ -25,19 +25,31 @@
 	width: 640px;
 	height: 640px;
 	position: relative;
-	border-radius: 8px;
 	cursor: pointer;
 	transition: box-shadow 0.3s ease, border 0.3s ease;
 	border: none;
 	box-shadow: none;
 	}
 #book.opened {
-  background: url('images/open_book.png') no-repeat center center;
-  background-size: cover;
+  background: url('images/leafy_frame.png') no-repeat center center;
+  background-size: contain;
   border: 5px double #3aff80;
+  width: 1000px;
+  height: auto;
+  padding: 40px;
+  border-radius: 8px;
   box-shadow: 0 0 30px rgba(0, 255, 127, 0.5);
 }
-  
+  #page-frame {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  height: 100%;
+  background: url('images/open_book.png') no-repeat center center;
+  background-size: contain;
+  padding: 20px;
+}
 
     #controls {
       margin-top: 20px;
@@ -86,28 +98,15 @@ button:hover {
   height: 600px;
 }
 
-#page-frame {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 40px;
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
+.page {
+  flex: 1;
+  background-color: rgba(0, 30, 0, 0.3);
+  padding: 12px;
+  border-radius: 6px;
+  overflow: auto;
+  box-shadow: inset 0 0 10px rgba(0,255,127,0.2);
 }
 
-.page {
-  width: 48%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  background-color: rgba(15, 30, 15, 0.65);
-  padding: 15px;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: inset 0 0 10px rgba(0, 255, 127, 0.2);
-}
 
 #page-question {
   font-size: 1.2em;
@@ -129,23 +128,18 @@ button:hover {
 
 /* Mobile: stack pages vertically */
 @media (max-width: 768px) {
-  #book.opened {
-    width: 100%;
-    height: auto;
-    background: none;
-    box-shadow: none;
-    border: none;
+   #book.opened {
+    width: 95%;
+    padding: 20px;
   }
 
-  #page-frame {
+   #page-frame {
     flex-direction: column;
-    gap: 20px;
-    padding: 10px;
+    background-size: cover;
   }
 
   .page {
-    width: 100%;
-    background-color: rgba(10, 20, 10, 0.7);
+    min-height: 200px;
   }
 }
 
@@ -157,6 +151,18 @@ button:hover {
   <div id="book" onclick="openTome()" ondragover="event.preventDefault()" ondrop="handleDrop(event)">
 
   </div>
+  <div id="page-content" style="display: none;">
+  <div id="page-frame">
+    <div class="page">
+      <div id="page-question"></div>
+      <div id="page-prompt"></div>
+    </div>
+    <div class="page">
+      <img id="page-image" />
+    </div>
+  </div>
+</div>
+
   <div id="controls">
     <textarea id="entryInput" placeholder="Ask the Tome a question..."></textarea>
     <button onclick="addEntry()">Add Page</button>
@@ -212,21 +218,22 @@ function openTome() {
   isOpen = true;
   book.classList.add("opened");
   controls.style.display = "flex";
-
+pageContent.style.display = "block"; // show pages
   // Update the heading
   updateTomeHeading();
 
   renderPage(currentPage);
 }
 function updateTomeHeading() {
+  const heading = document.getElementById("tomeHeading");
   if (!entries.length || !entries[currentPage]) {
     heading.textContent = "The pages rustle quietly, waiting for a question...";
-  } else if (entries[currentPage].image) {
-    heading.textContent = "The Tome shows this beautifully rendered image.";
   } else {
-    heading.textContent = "The pages rustle quietly, waiting for a question...";
+    const title = entries[currentPage].question || "Untitled";
+    heading.textContent = `The Tome shows this beautifully rendered image of "${title}" — Page ${currentPage + 1} of ${entries.length}`;
   }
 }
+
 
 
     function addEntry() {
@@ -354,6 +361,7 @@ function updateTomeHeading() {
       if (e.key === "ArrowLeft") {
         currentPage = Math.max(0, currentPage - 1);
         renderPage(currentPage);
+		updateTomeHeading();
       } else if (e.key === "ArrowRight") {
         currentPage = Math.min(entries.length - 1, currentPage + 1);
         renderPage(currentPage);
