@@ -6,57 +6,99 @@
   <title>Tome of Enlighten-Mint</title>
   <link rel="icon" type="image/png" href="images/book_icon.png">
   <style>
+    /* Page background and font */
     body {
       background: radial-gradient(circle at center, #1b1f1b, #0d0f0d);
       color: #d2f5ce;
       font-family: 'Georgia', serif;
       margin: 0;
-      padding: 0;
+      padding: 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
     }
 
+    /* Heading above the book */
+    #tomeHeading {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 1.2em;
+      max-width: 90%;
+    }
+
+    /* Closed book state */
     #book {
-	background: url('images/closed_book.png') no-repeat center center;
-	background-size: cover;
-	width: 640px;
-	height: 640px;
-	position: relative;
-	cursor: pointer;
-	transition: box-shadow 0.3s ease, border 0.3s ease;
-	border: none;
-	box-shadow: none;
-	}
-#book.opened {
-  background: url('images/leafy_frame.png') no-repeat center center;
-  background-size: contain;
-  width: 1150px;
-  
-  height: 850px;
-  padding: 10px;
-  box-shadow: 0 0 40px rgba(0, 255, 127, 0.5);
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-}
- #page-frame {
-  width: 10000px;
-  height: 700px;
-  background: url('images/open_book.png') no-repeat center center;
-  background-size: contain;
-  display: flex;
+      background: url('images/closed_book.png') no-repeat center center;
+      background-size: cover;
+      width: 640px;
+      height: 640px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.4s ease;
+    }
 
+    /* Opened book state with leafy frame and glow */
+    #book.opened {
+      background: url('images/leafy_frame.png') no-repeat center center;
+      background-size: contain;
+      width: 1000px;
+      height: auto;
+      padding: 40px;
+      box-shadow: 0 0 40px rgba(0, 255, 127, 0.5);
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-  padding: 40px;
-  gap: 20px;
-}
+    /* Inner page layout (open_book background + left/right pages) */
+    #page-frame {
+      width: 920px;
+      height: 560px;
+      background: url('images/open_book.png') no-repeat center center;
+      background-size: contain;
+      display: flex;
+      gap: 20px;
+      padding: 40px;
+      box-sizing: border-box;
+    }
 
+    /* Individual page panels */
+    .page {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: rgba(0, 30, 0, 0.3);
+      border-radius: 6px;
+      padding: 12px;
+      overflow-y: auto;
+      box-shadow: inset 0 0 10px rgba(0,255,127,0.2);
+    }
+
+    /* Question styling */
+    #page-question {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    /* Prompt/answer styling */
+    #page-prompt {
+      font-size: 1em;
+      white-space: pre-wrap;
+    }
+
+    /* Image styling */
+    #page-image {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+      box-shadow: 0 0 15px rgba(60, 255, 130, 0.2);
+      margin-top: 8px;
+    }
+
+    /* Controls below the book */
     #controls {
       margin-top: 20px;
       display: none;
@@ -66,7 +108,7 @@
     }
 
     textarea {
-      width: 400px;
+      width: 300px;
       height: 80px;
       resize: none;
       font-family: 'Georgia', serif;
@@ -78,92 +120,59 @@
       padding: 8px;
     }
 
-   button {
-  padding: 6px 8px;
-  font-size: 8px;
-  background: linear-gradient(to bottom, #3aff80, #1c7f46);
-  color: #061006;
-  border: 2px solid #1c7f46;
-  border-radius: 6px;
-  cursor: pointer;
-  font-family: 'Georgia', serif;
-  text-shadow: 0 0 3px #b2ffc2;
-  box-shadow: 0 0 5px rgba(0,255,127,0.3);
-  transition: all 0.2s ease-in-out;
-}
-button:hover {
-  background: linear-gradient(to bottom, #2ae069, #145a33);
-  transform: scale(1.05);
-  box-shadow: 0 0 10px rgba(0,255,127,0.6);
-}
+    button {
+      padding: 8px 12px;
+      font-size: 14px;
+      background: linear-gradient(to bottom, #3aff80, #1c7f46);
+      color: #061006;
+      border: 2px solid #1c7f46;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'Georgia', serif;
+      text-shadow: 0 0 3px #b2ffc2;
+      box-shadow: 0 0 5px rgba(0,255,127,0.3);
+      transition: all 0.2s ease-in-out;
+    }
+    button:hover {
+      background: linear-gradient(to bottom, #2ae069, #145a33);
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(0,255,127,0.6);
+    }
 
-
-
-
-.page {
-  flex: 1;
-  overflow: hidden;
-  background-color: rgba(0, 30, 0, 0.3);
-  border-radius: 6px;
-  box-shadow: inset 0 0 10px rgba(0,255,127,0.2);
-  padding: 10px;
-}
-
-
-#page-question {
-  font-size: 1.2em;
-  font-weight: bold;
-  margin-bottom: 0.5em;
-}
-
-#page-prompt {
-  font-size: 1em;
-  white-space: pre-wrap;
-}
-
-#page-image {
-  width: 100%;
-  height: auto;
-  border-radius: 6px;
-  box-shadow: 0 0 15px rgba(60, 255, 130, 0.2);
-}
-
-/* Mobile: stack pages vertically */
-@media (max-width: 768px) {
-   #book.opened {
-    width: 95%;
-    padding: 20px;
-  }
-
-   #page-frame {
-    flex-direction: column;
-    background-size: cover;
-  }
-
-  .page {
-    min-height: 200px;
-  }
-}
-
+    /* Mobile: stack pages vertically and remove frame if desired */
+    @media (max-width: 768px) {
+      #book.opened {
+        width: 95%;
+        padding: 20px;
+        box-shadow: 0 0 20px rgba(0,255,127,0.4);
+      }
+      #page-frame {
+        flex-direction: column;
+        align-items: stretch;
+        height: auto;
+        padding: 20px;
+        gap: 15px;
+      }
+      .page {
+        min-height: 200px;
+      }
+    }
   </style>
 </head>
 <body>
-<h1 id="tomeHeading">The mysterious tome sits before you, the faint smell of mint hangs in the air. Do you dare to open the tome?</h1>
+  <h1 id="tomeHeading">The mysterious tome sits before you, the faint smell of mint hangs in the air. Do you dare to open the tome?</h1>
 
-  <div id="book" onclick="openTome()" ondragover="event.preventDefault()" ondrop="handleDrop(event)">
-<div id="book"  class="opened" style="display: none;">
-  
-  </div>
-  <div id="page-frame"> 
-    <div class="page" id="left-side">
-      <div id="page-question"></div>
-      <div id="page-prompt"></div>
-    </div>
-    <div class="page id="right-side">
-      <img id="page-image" />
+  <div id="book" ondragover="event.preventDefault()" ondrop="handleDrop(event)" onclick="openTome()">
+    <div id="page-frame">
+      <div class="page" id="left-page">
+        <div id="page-question"></div>
+        <div id="page-prompt"></div>
+      </div>
+      <div class="page" id="right-page">
+        <img id="page-image" alt="Tome Illustration" />
+      </div>
     </div>
   </div>
-</div>
 
   <div id="controls">
     <textarea id="entryInput" placeholder="Ask the Tome a question..."></textarea>
@@ -171,89 +180,70 @@ button:hover {
     <button onclick="saveTome()">Save Tome</button>
     <button onclick="loadTome()">Load Tome</button>
     <button onclick="exportTome()">Export Tome</button>
-    <input type="file" id="importInput" style="display:none" accept="application/json"/>
-    <button onclick="document.getElementById('importInput').click()">Import Tome</button>
-	<button onclick="uploadPageImage()">+ Upload Page</button>
-	<button onclick="deleteCurrentPage()">- Delete Page</button>
-	<input type="file" id="pageImageInput" accept="image/*" style="display: none;" />
-
+    <button onclick="importTome()">Import Tome</button>
+    <input type="file" id="importInput" accept="application/json" style="display:none" />
+    <button onclick="uploadPageImage()">+ Upload Page</button>
+    <button onclick="deleteCurrentPage()">- Delete Page</button>
+    <input type="file" id="pageImageInput" accept="image/*" style="display:none" />
   </div>
-<div id="pageDescription" style="display: none; max-width: 800px; padding: 20px; color: #d2f5ce; font-family: Georgia, serif; font-size: 16px; text-align: center;"></div>
 
   <script>
     const book = document.getElementById("book");
-    const pageContent = document.getElementById("page-content");
+    const pageFrame = document.getElementById("page-frame");
+    const controls = document.getElementById("controls");
     const entryInput = document.getElementById("entryInput");
     const importInput = document.getElementById("importInput");
-    const controls = document.getElementById("controls");
+    const pageImageInput = document.getElementById("pageImageInput");
+    const questionEl = document.getElementById("page-question");
+    const promptEl = document.getElementById("page-prompt");
+    const imageEl = document.getElementById("page-image");
+    const heading = document.getElementById("tomeHeading");
 
     let entries = JSON.parse(localStorage.getItem("tomeEntries") || "[]");
     let currentPage = 0;
     let isOpen = false;
 
- function renderPage(index) {
-  const questionEl = document.getElementById("page-question");
-  const promptEl = document.getElementById("page-prompt");
-  const imageEl = document.getElementById("page-image");
-  const entry = entries[index];
+    function openTome() {
+      if (isOpen) return;
+      isOpen = true;
+      book.classList.add("opened");
+      pageFrame.style.display = "flex";
+      controls.style.display = "flex";
+      updateTomeHeading();
+      renderPage(currentPage);
+    }
 
-  if (!entry) {
-    questionEl.textContent = "";
-    promptEl.textContent = "";
-    imageEl.src = "";
-    document.title = "The pages rustle quietly, waiting for a question...";
-    return;
-  }
+    function renderPage(index) {
+      const entry = entries[index] || {};
+      const title = entry.question || "(Untitled Question)";
+      const prompt = entry.answer || "";
+      const img = entry.image || "";
 
-  questionEl.textContent = entry.question || "(Untitled Question)";
-  promptEl.textContent = entry.answer || "";
-  imageEl.src = entry.image || "";
-  document.title = `The Tome shows this beautifully rendered image of "${entry.question}" — Page ${index + 1} of ${entries.length}`;
-}
+      questionEl.textContent = title;
+      promptEl.textContent = prompt;
+      imageEl.src = img;
 
+      heading.textContent = img
+        ? `The Tome shows this beautifully rendered image of "${title}" — Page ${index + 1} of ${entries.length}`
+        : entries.length
+          ? `Page ${index + 1} of ${entries.length}`
+          : "The pages rustle quietly, waiting for a question...";
+    }
 
-
-   const heading = document.getElementById('tome-heading');
-
-function openTome() {
-  if (isOpen) return;
-  isOpen = true;
-  book.classList.add("opened");
-  controls.style.display = "flex";
-pageContent.style.display = "block"; // show pages
-  // Update the heading
-  updateTomeHeading();
-
-  renderPage(currentPage);
-}
-function updateTomeHeading() {
-  const heading = document.getElementById("tomeHeading");
-  if (!entries.length || !entries[currentPage]) {
-    heading.textContent = "The pages rustle quietly, waiting for a question...";
-  } else {
-    const title = entries[currentPage].question || "Untitled";
-    heading.textContent = `The Tome shows this beautifully rendered image of "${title}" — Page ${currentPage + 1} of ${entries.length}`;
-  }
-}
-
-
+    function updateTomeHeading() {
+      if (!entries.length) {
+        heading.textContent = "The pages rustle quietly, waiting for a question...";
+      }
+    }
 
     function addEntry() {
-      const question = entryInput.value.trim();
-      if (question) {
-        const entry = {
-          question: question,
-          answer: "", // Placeholder for future expansions
-          date: new Date().toISOString()
-        };
-        entries.push(entry);
-        currentPage = entries.length - 1;
-        localStorage.setItem("tomeEntries", JSON.stringify(entries));
-        renderPage(currentPage);
-        entryInput.value = "";
-		updateTomeHeading();
-
-      }
+      const q = entryInput.value.trim();
+      if (!q) return;
+      entries.push({ question: q, answer: "", image: "", date: new Date().toISOString() });
+      currentPage = entries.length - 1;
+      localStorage.setItem("tomeEntries", JSON.stringify(entries));
+      entryInput.value = "";
+      renderPage(currentPage);
     }
 
     function saveTome() {
@@ -262,14 +252,9 @@ function updateTomeHeading() {
     }
 
     function loadTome() {
-      const stored = localStorage.getItem("tomeEntries");
-      if (stored) {
-        entries = JSON.parse(stored);
-        currentPage = 0;
-        renderPage(currentPage);
-		updateTomeHeading();
-
-      }
+      entries = JSON.parse(localStorage.getItem("tomeEntries") || "[]");
+      currentPage = 0;
+      renderPage(currentPage);
     }
 
     function exportTome() {
@@ -283,92 +268,64 @@ function updateTomeHeading() {
       URL.revokeObjectURL(url);
     }
 
-    importInput.addEventListener("change", function() {
-      const file = this.files[0];
+    function importTome() {
+      importInput.click();
+    }
+
+    importInput.addEventListener("change", e => {
+      const file = e.target.files[0];
       if (!file) return;
       const reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = () => {
         try {
-          entries = JSON.parse(e.target.result);
+          entries = JSON.parse(reader.result);
           currentPage = 0;
           localStorage.setItem("tomeEntries", JSON.stringify(entries));
           renderPage(currentPage);
-        } catch (err) {
-          alert("Failed to load tome: invalid JSON.");
+        } catch {
+          alert("Invalid JSON file.");
         }
       };
       reader.readAsText(file);
     });
 
-    function handleDrop(event) {
-      event.preventDefault();
-      const file = event.dataTransfer.files[0];
-      if (file && file.type === "application/json") {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          try {
-            entries = JSON.parse(e.target.result);
-            currentPage = 0;
-            localStorage.setItem("tomeEntries", JSON.stringify(entries));
-            renderPage(currentPage);
-            if (!isOpen) openTome();
-          } catch (err) {
-            alert("Dropped file was not valid JSON.");
-          }
-        };
-        reader.readAsText(file);
-      } else {
-        alert("Only JSON files are accepted for drag-and-drop import.");
-      }
+    function deleteCurrentPage() {
+      if (!entries.length) return;
+      if (!confirm("Delete this page?")) return;
+      entries.splice(currentPage, 1);
+      currentPage = Math.max(0, currentPage - 1);
+      localStorage.setItem("tomeEntries", JSON.stringify(entries));
+      renderPage(currentPage);
     }
-	function uploadPageImage() {
-		document.getElementById("pageImageInput").click();
-	}
 
-	document.getElementById("pageImageInput").addEventListener("change", function () {
-		const file = this.files[0];
-	if (!file) return;
-	const reader = new FileReader();
-	reader.onload = function (e) {
-    const imageDataUrl = e.target.result;
-    const entry = {
-      question: "[Image Entry]",
-      answer: `<img src="${imageDataUrl}" alt="Uploaded Image" style="max-width:100%; border-radius: 4px;">`,
-      date: new Date().toISOString()
-    };
-    entries.push(entry);
-    currentPage = entries.length - 1;
-    localStorage.setItem("tomeEntries", JSON.stringify(entries));
-    renderPage(currentPage);
-	updateTomeHeading();
+    pageImageInput.addEventListener("change", e => {
+      const file = e.target.files[0];
+      if (!file || !file.type.startsWith("image/")) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result;
+        const q = prompt("Enter page title:", "");
+        const a = prompt("Enter page description:", "");
+        entries.push({ question: q || "(Image Entry)", answer: a || "", image: dataUrl, date: new Date().toISOString() });
+        currentPage = entries.length - 1;
+        localStorage.setItem("tomeEntries", JSON.stringify(entries));
+        renderPage(currentPage);
+      };
+      reader.readAsDataURL(file);
+    });
 
-	};
-	reader.readAsDataURL(file);
-	});
+    function uploadPageImage() {
+      pageImageInput.click();
+    }
 
-	function deleteCurrentPage() {
-	if (entries.length === 0) return;
-	if (!confirm("Are you sure you want to delete this page?")) return;
-
-	entries.splice(currentPage, 1);
-	currentPage = Math.max(0, currentPage - 1);
-	localStorage.setItem("tomeEntries", JSON.stringify(entries));
-	renderPage(currentPage);
-	updateTomeHeading();
-
-}
-
-    document.addEventListener("keydown", (e) => {
-      if (!isOpen || entries.length === 0) return;
+    document.addEventListener("keydown", e => {
+      if (!isOpen || !entries.length) return;
       if (e.key === "ArrowLeft") {
         currentPage = Math.max(0, currentPage - 1);
         renderPage(currentPage);
-		updateTomeHeading();
       } else if (e.key === "ArrowRight") {
         currentPage = Math.min(entries.length - 1, currentPage + 1);
         renderPage(currentPage);
-		updateTomeHeading();
-
       }
     });
   </script>
