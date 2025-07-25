@@ -33,12 +33,16 @@
 #book.opened {
   background: url('images/leafy_frame.png') no-repeat center center;
   background-size: contain;
-  border: 5px double #3aff80;
-  width: 1000px;
+  width: 1050px;
   height: auto;
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 0 30px rgba(0, 255, 127, 0.5);
+  padding: 30px;
+  box-shadow: 0 0 40px rgba(0, 255, 127, 0.5);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 }
  #page-frame {
   width: 950px;
@@ -92,19 +96,7 @@ button:hover {
   box-shadow: 0 0 10px rgba(0,255,127,0.6);
 }
 
-#book.opened {
-  background: url('images/leafy_frame.png') no-repeat center center;
-  background-size: contain;
-  width: 1050px;
-  height: auto;
-  padding: 30px;
-  box-shadow: 0 0 40px rgba(0, 255, 127, 0.5);
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
+
 
 
 .page {
@@ -158,9 +150,7 @@ button:hover {
 <h1 id="tomeHeading">The mysterious tome sits before you, the faint smell of mint hangs in the air. Do you dare to open the tome?</h1>
 
   <div id="book" onclick="openTome()" ondragover="event.preventDefault()" ondrop="handleDrop(event)">
-
-  </div>
-  <div id="book"  class="opened" style="display: none;">
+<div id="book"  class="opened" style="display: none;">
   <div id="page-frame"> 
     <div class="page" id="left-side">
       <div id="page-question"></div>
@@ -171,6 +161,8 @@ button:hover {
     </div>
   </div>
 </div>
+  </div>
+  
 
   <div id="controls">
     <textarea id="entryInput" placeholder="Ask the Tome a question..."></textarea>
