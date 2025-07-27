@@ -1,0 +1,245 @@
+:root {
+  /* Default/Minty Theme Variables */
+  --book-bg-closed: url('/Skins/Minty/closed_book.png');
+  --book-bg-open: url('/Skins/Minty/open_book.png');
+  --book-bg-frame: url('/Skins/Minty/leafy_frame.png');
+  --book-width: 1150px;
+  --book-height: 805px;
+  --page-frame-width: 1000px;
+  --page-frame-height: 632px;
+  --accent-color: #3aff80;
+  --page-bg: rgba(0, 30, 0, 0.18);
+  --font-family: 'Georgia', serif;
+  --text-color: #d2f5ce;
+  --shadow-color: rgba(0,255,127,0.5);
+}
+
+body {
+  background: radial-gradient(circle at center, #1b1f1b, #0d0f0d);
+  color: var(--text-color);
+  font-family: var(--font-family);
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+#tomeHeading {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.2em;
+  max-width: 90%;
+}
+
+#book-container {
+  position: relative;
+  width: var(--book-width);
+  height: var(--book-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+/* Closed Book */
+#closed-book {
+  background: var(--book-bg-closed) no-repeat center center;
+  background-size: cover;
+  width: 640px;
+  height: 640px;
+  cursor: pointer;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  transition: opacity 0.4s;
+  box-shadow: 0 0 40px var(--shadow-color);
+}
+
+/* Open Book Layout */
+#leafy-frame {
+  background: var(--book-bg-frame) no-repeat center center;
+  background-size: cover;
+  position: absolute;
+  width: var(--book-width);
+  height: var(--book-height);
+  left: 0;
+  top: 0;
+  z-index: 1;
+  pointer-events: none;
+  user-select: none;
+  display: block;
+  filter: drop-shadow(0 0 60px #3aff80cc);
+}
+
+#page-frame {
+  background: var(--book-bg-open) no-repeat center center;
+  background-size: contain;
+  width: var(--page-frame-width);
+  height: var(--page-frame-height);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  gap: 20px;
+  padding: 40px;
+  box-sizing: border-box;
+  z-index: 2;
+}
+
+/* Page panels (both left and right) */
+.page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--page-bg);
+  border-radius: 6px;
+  padding: 12px;
+  overflow-y: auto;
+  box-shadow: inset 0 0 10px var(--shadow-color);
+}
+
+#page-question {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+#page-prompt {
+  font-size: 1em;
+  white-space: pre-wrap;
+}
+#page-image {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  box-shadow: 0 0 15px rgba(60,255,130,0.2);
+  margin-top: 8px;
+  object-fit: contain;
+  max-height: 420px;
+  background: rgba(0,0,0,0.04);
+}
+
+/* Controls */
+#controls {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+textarea {
+  width: 300px;
+  height: 80px;
+  resize: none;
+  font-family: var(--font-family);
+  font-size: 14px;
+  background-color: #1f2d1f;
+  color: var(--text-color);
+  border: 1px solid var(--accent-color);
+  border-radius: 4px;
+  padding: 8px;
+}
+button {
+  padding: 8px 12px;
+  font-size: 14px;
+  background: linear-gradient(to bottom, var(--accent-color), #1c7f46);
+  color: #061006;
+  border: 2px solid #1c7f46;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--font-family);
+  text-shadow: 0 0 3px #b2ffc2;
+  box-shadow: 0 0 5px var(--shadow-color);
+  transition: all 0.2s ease-in-out;
+}
+button:hover {
+  background: linear-gradient(to bottom, #2ae069, #145a33);
+  transform: scale(1.05);
+  box-shadow: 0 0 10px var(--shadow-color);
+}
+
+/* Responsive tweaks */
+@media (max-width: 1200px) {
+  #book-container {
+    width: 95vw;
+    height: auto;
+    min-width: 0;
+  }
+  #leafy-frame, #page-frame {
+    width: 98vw;
+    max-width: 98vw;
+    min-width: 320px;
+  }
+}
+		  #controls-bar {
+  width: 98vw;
+  max-width: 1150px;
+  margin: 25px auto 0 auto;
+  padding: 10px 0;
+  background: rgba(35, 44, 38, 0.90);
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 12px 30px -10px #3aff8090 inset, 0 2px 8px #0e2011;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  z-index: 100;
+}
+#controls-bar textarea {
+  font-family: 'Georgia', serif;
+  font-size: 14px;
+  background-color: #1f2d1f;
+  color: #d2f5ce;
+  border: 1px solid #3aff80;
+  border-radius: 4px;
+  padding: 8px;
+  margin: 0 6px;
+}
+#controls-bar button, #controls-bar label {
+  padding: 7px 14px;
+  background: linear-gradient(to bottom, #3aff80, #145a33);
+  color: #061006;
+  border: 1.5px solid #1c7f46;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: 'Georgia', serif;
+  font-size: 14px;
+  margin: 0 2px;
+  box-shadow: 0 0 4px #3aff8044;
+  transition: background 0.18s, box-shadow 0.18s;
+  text-shadow: 0 0 2px #b2ffc2;
+  vertical-align: middle;
+}
+#controls-bar button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+#controls-bar label {
+  cursor: pointer;
+}
+#controls-bar input[type="file"] {
+  display: none;
+}
+#controls-bar button:hover, #controls-bar label:hover {
+  background: linear-gradient(to bottom, #1fa860, #073d21);
+  box-shadow: 0 0 10px #3aff8099;
+}
+
+/* Alternate Theme Example */
+.demonic {
+  --book-bg-closed: url('/Skins/Demonic/closed_book.png');
+  --book-bg-open: url('/Skins/Demonic/open_book.png');
+  --book-bg-frame: url('/Skins/Demonic/leafy_frame.png');
+  --accent-color: #ff2222;
+  --text-color: #ffeaea;
+  --page-bg: rgba(40, 0, 0, 0.21);
+  --shadow-color: rgba(255,0,40,0.44);
+}
+
+/* Add more themes as needed! */
