@@ -6,7 +6,6 @@
   <title>Tome of Enlighten-Mint</title>
   <link rel="icon" type="image/png" href="images/book_icon.png">
   <style>
-    /* Page background and font */
     body {
       background: radial-gradient(circle at center, #1b1f1b, #0d0f0d);
       color: #d2f5ce;
@@ -18,92 +17,106 @@
       align-items: center;
       min-height: 100vh;
     }
-
-    /* Heading above the book */
     #tomeHeading {
       text-align: center;
       margin-bottom: 20px;
       font-size: 1.2em;
       max-width: 90%;
     }
-
-    /* Closed book state */
-    #book {
+    /* LAYER CONTAINERS */
+    #book-container {
+      position: relative;
+      width: 1150px;
+      height: 805px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #closed-book {
       background: url('images/closed_book.png') no-repeat center center;
       background-size: cover;
       width: 640px;
       height: 640px;
-      position: relative;
       cursor: pointer;
-      transition: all 0.4s ease;
+      z-index: 2;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.4s;
     }
-#page-frame {
-  display: none;
-}	
-    /* Opened book state with leafy frame and glow */
-    #book.opened {
+    #open-book-layer {
+      display: none;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: 1;
+    }
+    #leafy-frame {
       background: url('images/leafy_frame.png') no-repeat center center;
-      background-size: contain;
-      width: 1000px;
-      height: auto;
-      padding: 40px;
-      box-shadow: 0 0 40px rgba(0, 255, 127, 0.5);
-      border-radius: 12px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      background-size: cover;
+      position: absolute;
+      width: 1150px;
+      height: 805px;
+      left: 0;
+      top: 0;
+      z-index: 1;
+      pointer-events: none;
+      user-select: none;
     }
-/* only show the page spread once .opened is on #book */
-#book.opened #page-frame {
-  display: flex;
-}
-    /* Inner page layout (open_book background + left/right pages) */
     #page-frame {
-      width: 920px;
-      height: 560px;
       background: url('images/open_book.png') no-repeat center center;
       background-size: contain;
+      width: 1000px;
+      height: 632px;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
       display: flex;
       gap: 20px;
       padding: 40px;
       box-sizing: border-box;
+      z-index: 2;
     }
-
-    /* Individual page panels */
     .page {
       flex: 1;
       display: flex;
       flex-direction: column;
-      background-color: rgba(0, 30, 0, 0.3);
+      background-color: rgba(0, 30, 0, 0.18);
       border-radius: 6px;
-      padding: 12px;
+      padding: 16px;
       overflow-y: auto;
       box-shadow: inset 0 0 10px rgba(0,255,127,0.2);
     }
-
-    /* Question styling */
     #page-question {
       font-size: 1.2em;
       font-weight: bold;
       margin-bottom: 8px;
     }
-
-    /* Prompt/answer styling */
     #page-prompt {
       font-size: 1em;
       white-space: pre-wrap;
     }
-
-    /* Image styling */
     #page-image {
       width: 100%;
       height: auto;
-      border-radius: 4px;
+      border-radius: 6px;
       box-shadow: 0 0 15px rgba(60, 255, 130, 0.2);
       margin-top: 8px;
+      object-fit: contain;
+      max-height: 420px;
+      background: rgba(0,0,0,0.04);
     }
-
-    /* Controls below the book */
+    /* Hide open-book stuff by default */
+    #open-book-layer,
+    #page-frame,
+    #leafy-frame {
+      display: none;
+    }
+    /* Controls below */
     #controls {
       margin-top: 20px;
       display: none;
@@ -111,7 +124,6 @@
       gap: 10px;
       justify-content: center;
     }
-
     textarea {
       width: 300px;
       height: 80px;
@@ -124,7 +136,6 @@
       border-radius: 4px;
       padding: 8px;
     }
-
     button {
       padding: 8px 12px;
       font-size: 14px;
@@ -143,25 +154,39 @@
       transform: scale(1.05);
       box-shadow: 0 0 10px rgba(0,255,127,0.6);
     }
-
-  
+    /* Show open-book stuff when tome is open */
+    .open #open-book-layer,
+    .open #page-frame,
+    .open #leafy-frame {
+      display: block;
+    }
+    .open #closed-book {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .open #controls {
+      display: flex;
+    }
   </style>
 </head>
 <body>
   <h1 id="tomeHeading">The mysterious tome sits before you, the faint smell of mint hangs in the air. Do you dare to open the tome?</h1>
 
-  <div id="book" ondragover="event.preventDefault()" ondrop="handleDrop(event)" onclick="openTome()">
-    <div id="page-frame">
-      <div class="page" id="left-page">
-        <div id="page-question"></div>
-        <div id="page-prompt"></div>
-      </div>
-      <div class="page" id="right-page">
-        <img id="page-image" alt="Tome Illustration" />
+  <div id="book-container">
+    <div id="closed-book" onclick="openTome()" title="Open the Tome"></div>
+    <div id="open-book-layer">
+      <div id="leafy-frame"></div>
+      <div id="page-frame">
+        <div class="page" id="left-page">
+          <div id="page-question"></div>
+          <div id="page-prompt"></div>
+        </div>
+        <div class="page" id="right-page">
+          <img id="page-image" alt="Tome Illustration" />
+        </div>
       </div>
     </div>
   </div>
-
   <div id="controls">
     <textarea id="entryInput" placeholder="Ask the Tome a question..."></textarea>
     <button onclick="addEntry()">Add Page</button>
@@ -174,10 +199,10 @@
     <button onclick="deleteCurrentPage()">- Delete Page</button>
     <input type="file" id="pageImageInput" accept="image/*" style="display:none" />
   </div>
-
   <script>
-    const book = document.getElementById("book");
-    const pageFrame = document.getElementById("page-frame");
+    const bookContainer = document.getElementById("book-container");
+    const closedBook = document.getElementById("closed-book");
+    const openBookLayer = document.getElementById("open-book-layer");
     const controls = document.getElementById("controls");
     const entryInput = document.getElementById("entryInput");
     const importInput = document.getElementById("importInput");
@@ -194,8 +219,7 @@
     function openTome() {
       if (isOpen) return;
       isOpen = true;
-      book.classList.add("opened");
-      controls.style.display = "flex";
+      bookContainer.classList.add("open");
       updateTomeHeading();
       renderPage(currentPage);
     }
@@ -208,7 +232,8 @@
 
       questionEl.textContent = title;
       promptEl.textContent = prompt;
-      imageEl.src = img;
+      imageEl.src = img || "";
+      imageEl.style.display = img ? "block" : "none";
 
       heading.textContent = img
         ? `The Tome shows this beautifully rendered image of "${title}" — Page ${index + 1} of ${entries.length}`
