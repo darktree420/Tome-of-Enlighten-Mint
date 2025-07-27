@@ -37,7 +37,9 @@
       cursor: pointer;
       transition: all 0.4s ease;
     }
-
+#page-frame {
+  display: none;
+}	
     /* Opened book state with leafy frame and glow */
     #book.opened {
       background: url('images/leafy_frame.png') no-repeat center center;
@@ -51,7 +53,10 @@
       justify-content: center;
       align-items: center;
     }
-
+/* only show the page spread once .opened is on #book */
+#book.opened #page-frame {
+  display: flex;
+}
     /* Inner page layout (open_book background + left/right pages) */
     #page-frame {
       width: 920px;
@@ -190,7 +195,6 @@
       if (isOpen) return;
       isOpen = true;
       book.classList.add("opened");
-      pageFrame.style.display = "flex";
       controls.style.display = "flex";
       updateTomeHeading();
       renderPage(currentPage);
