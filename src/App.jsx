@@ -28,6 +28,7 @@ function App() {
   // Save to Firestore on change (except while loading initial data)
   useEffect(() => {
     if (!loading) {
+		console.log("Saving entries to Firestore:", entries); // <---- Add this
       setDoc(doc(db, "tomes", TOME_DOC), { entries }, { merge: true });
     }
   }, [entries, loading]);
