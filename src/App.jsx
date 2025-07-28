@@ -62,7 +62,7 @@ function App() {
             <div id="leafy-frame" style={leafyFrameStyle} />
             <PageSpread entry={entries[currentPage]} />
 
-            />
+      
           </>
         )}
       </div>
