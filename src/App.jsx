@@ -67,8 +67,17 @@ function App() {
   return (
     <div className="App" style={{ position: "relative", minHeight: "100vh" }}>
       <h1 id="tomeHeading">
-        The mysterious tome sits before you, the faint smell of mint hangs in the air. Do you dare to open the tome?
-      </h1>
+  {!isOpen ? (
+    <>The mysterious tome sits before you, the faint smell of mint hangs in the air. Do you dare to open the tome?</>
+  ) : (
+    entries.length === 0 || !entries[currentPage]?.question ? (
+      <>The blank page awaits a question...</>
+    ) : (
+      <>This page shows <span style={{ color: "#4fd", fontWeight: 600 }}>{entries[currentPage].question}</span> beautifully illustrated.</>
+    )
+  )}
+</h1>
+
       <div id="book-container" style={{ position: "relative", width: 1150, height: 805 }}>
         {!isOpen && (
           <div

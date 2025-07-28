@@ -7,7 +7,7 @@ const firebaseConfig = {
      apiKey: "AIzaSyAMatTvaez5hQhc3b5DOgqTgb6j_Uk5Pa8",
   authDomain: "mystic-tome-467312.firebaseapp.com",
   projectId: "mystic-tome-467312",
-  storageBucket: "mystic-tome-467312.appspot.com",
+  storageBucket: "mystic-tome-467312.firebasestorage.app",
   messagingSenderId: "1083041581692",
   appId: "1:1083041581692:web:b8560598d354924b6057f9"
 };

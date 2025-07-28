@@ -5,41 +5,51 @@ export default function PageSpread({
   entries,
   setEntries,
   currentPage,
-  handleImageUpload, // NEW: passed down from App.jsx for Firebase storage!
+  handleImageUpload,
 }) {
   const [editing, setEditing] = useState({ field: null, value: "" });
   const fileInput = useRef();
 
-  // Start editing a field
+  // Defensive: Don't allow editing if entry is missing
   function startEdit(field) {
+    if (!entry) return;
     setEditing({ field, value: entry[field] || "" });
   }
 
-  // Finish editing and update entry
   function finishEdit() {
-    if (editing.field) {
-      const updatedEntries = [...entries];
-      updatedEntries[currentPage][editing.field] = editing.value;
-      setEntries(updatedEntries);
+    if (!entry || !editing.field) {
+      setEditing({ field: null, value: "" });
+      return;
     }
+    const updatedEntries = [...entries];
+    updatedEntries[currentPage][editing.field] = editing.value;
+    setEntries(updatedEntries);
     setEditing({ field: null, value: "" });
   }
 
-  // Handle image upload for Firebase
   function onFileChange(e) {
+    if (!entry) return;
     const file = e.target.files[0];
     if (!file || !file.type.startsWith("image/")) return;
-    // Use the provided Firebase upload handler (not FileReader)
     if (handleImageUpload) handleImageUpload(file, currentPage);
   }
 
-  // Remove image
   function removeImage() {
+    if (!entry) return;
     if (window.confirm("Remove this image from the page? (Cannot be undone)")) {
       const updatedEntries = [...entries];
       updatedEntries[currentPage].image = "";
       setEntries(updatedEntries);
     }
+  }
+
+  // Defensive: If no entry, prompt user
+  if (!entry) {
+    return (
+      <div style={{ padding: 32, textAlign: "center", color: "#888", fontSize: "1.2em" }}>
+        <div>No page loaded.<br />Add a new page to begin, or use the arrows below to navigate.</div>
+      </div>
+    );
   }
 
   return (
