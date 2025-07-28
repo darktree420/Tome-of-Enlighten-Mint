@@ -43,6 +43,7 @@ Entries are stored as an array of JSON objects like:
   "answer": "The Emberforged dwarves of old...",
   "date": "2025-07-23T18:42:00.000Z"
 }
+```
 
 ## React + Vite
 
