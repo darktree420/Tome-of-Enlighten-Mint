@@ -4,12 +4,12 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-     apiKey: "AIzaSyC4lve_6uPJgogpdW8KAdCwczEVyqq_fe4",
-  authDomain: "tome-of-enlighten-mint.firebaseapp.com",
-  projectId: "tome-of-enlighten-mint",
-  storageBucket: "tome-of-enlighten-mint.appspot.com",
-  messagingSenderId: "556319817663",
-  appId: "1:556319817663:web:f6f7fc025da0abdbfb2b0a"
+     apiKey: "AIzaSyAMatTvaez5hQhc3b5DOgqTgb6j_Uk5Pa8",
+  authDomain: "mystic-tome-467312.firebaseapp.com",
+  projectId: "mystic-tome-467312",
+  storageBucket: "mystic-tome-467312.appspot.com",
+  messagingSenderId: "1083041581692",
+  appId: "1:1083041581692:web:b8560598d354924b6057f9"
 };
 
 const app = initializeApp(firebaseConfig);
