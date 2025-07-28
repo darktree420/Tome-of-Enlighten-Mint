@@ -1,54 +1,81 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PageSpread from "./components/PageSpread";
 import Controls from "./components/Controls";
+import "./index.css";
+import { db, storage } from "./firebase";
+import { doc, setDoc, onSnapshot } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import imageCompression from 'browser-image-compression';
 
-export default function App() {
-  // Demo initial entry for testing
-  const [entries, setEntries] = useState([
-    {
-      question: "What is the Tome of Enlighten-Mint?",
-      answer: "A legendary artifact containing all knowledge of dragons, minty freshness, and possibly your next favorite RPG session.",
-      image: "",
-      date: new Date().toISOString(),
-    },
-  ]);
-  const [currentPage, setCurrentPage] = useState(0);
+const TOME_DOC = "main"; // Name of your tome document in Firestore
+
+function App() {
   const [isOpen, setIsOpen] = useState(false);
+  const [entries, setEntries] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  // Real-time sync from Firestore
+  useEffect(() => {
+    const unsub = onSnapshot(doc(db, "tomes", TOME_DOC), (docSnap) => {
+      if (docSnap.exists()) setEntries(docSnap.data().entries || []);
+      else setEntries([]);
+      setLoading(false);
+    });
+    return unsub;
+  }, []);
+
+  // Save to Firestore on change (except while loading initial data)
+  useEffect(() => {
+    if (!loading) {
+      setDoc(doc(db, "tomes", TOME_DOC), { entries }, { merge: true });
+    }
+  }, [entries, loading]);
+
+  // Image upload handler for PageSpread
+  async function handleImageUpload(file, pageIndex) {
+    const compressed = await imageCompression(file, { maxWidthOrHeight: 800, maxSizeMB: 0.3 });
+    const imgRef = ref(storage, `tome-images/${file.name}-${Date.now()}`);
+    await uploadBytes(imgRef, compressed);
+    const url = await getDownloadURL(imgRef);
+
+    // Update entry's image URL
+    setEntries((old) => {
+      const copy = [...old];
+      copy[pageIndex] = { ...copy[pageIndex], image: url };
+      return copy;
+    });
+  }
+
+  // Book leafy frame style
+  const leafyFrameStyle = {
+    background: "url(/Tome-of-Enlighten-Mint/Skins/Minty/leafy_frame.png) no-repeat center center",
+    backgroundSize: "cover",
+    position: "absolute",
+    width: 1150,
+    height: 805,
+    left: 0,
+    top: 0,
+    zIndex: 1,
+    pointerEvents: "none",
+    userSelect: "none",
+    display: isOpen ? "block" : "none"
+  };
+
+  if (loading) return <div>Loading the Tome of Enlighten-Mint...</div>;
 
   return (
-    <div
-      className="App"
-      style={{
-        minHeight: "100vh",
-        background: "radial-gradient(circle at center, #1b1f1b, #0d0f0d)",
-        color: "#d2f5ce",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        padding: "32px 0",
-      }}
-    >
-      <h1 id="tomeHeading" style={{ textAlign: "center", marginBottom: 20 }}>
+    <div className="App" style={{ position: "relative", minHeight: "100vh" }}>
+      <h1 id="tomeHeading">
         The mysterious tome sits before you, the faint smell of mint hangs in the air. Do you dare to open the tome?
       </h1>
-
-      <div
-        id="book-container"
-        style={{
-          position: "relative",
-          width: "1150px",
-          height: "805px",
-          marginBottom: 20,
-        }}
-      >
-        {/* Closed book (landing) */}
+      <div id="book-container" style={{ position: "relative", width: 1150, height: 805 }}>
         {!isOpen && (
           <div
             id="closed-book"
             onClick={() => setIsOpen(true)}
-            title="Open the Tome"
             style={{
-              background: "url(/Tome-of-Enlighten-Mint//Skins/Minty/closed_book.png) no-repeat center center",
+              background: "url(/Tome-of-Enlighten-Mint/Skins/Minty/closed_book.png) no-repeat center center",
               backgroundSize: "cover",
               width: 640,
               height: 640,
@@ -58,39 +85,17 @@ export default function App() {
               top: "50%",
               transform: "translate(-50%, -50%)",
               zIndex: 2,
-              boxShadow: "0 0 40px #3aff80aa",
-              borderRadius: 16,
-              transition: "box-shadow 0.2s",
             }}
+            title="Open the Tome"
           />
         )}
-
-        {/* Open book (leafy frame, page spread) */}
         {isOpen && (
           <>
-            {/* Leafy frame (background) */}
-            <div
-              id="leafy-frame"
-              style={{
-                background: "url(/Tome-of-Enlighten-Mint//Skins/Minty/leafy_frame.png) no-repeat center center",
-                backgroundSize: "cover",
-                position: "absolute",
-                width: 1150,
-                height: 805,
-                left: 0,
-                top: 0,
-                zIndex: 1,
-                pointerEvents: "none",
-                userSelect: "none",
-                filter: "drop-shadow(0 0 60px #3aff80cc)",
-                opacity: 0.96,
-              }}
-            />
-            {/* Book open page frame and content */}
+            <div id="leafy-frame" style={leafyFrameStyle} />
             <div
               id="page-frame"
               style={{
-                background: "url(/Tome-of-Enlighten-Mint//Skins/Minty/open_book.png) no-repeat center center",
+                background: "url(/Tome-of-Enlighten-Mint/Skins/Minty/open_book.png) no-repeat center center",
                 backgroundSize: "contain",
                 width: 1000,
                 height: 632,
@@ -110,13 +115,12 @@ export default function App() {
                 entries={entries}
                 setEntries={setEntries}
                 currentPage={currentPage}
+                handleImageUpload={handleImageUpload}
               />
             </div>
           </>
         )}
       </div>
-
-      {/* Controls bar always under the book when open */}
       {isOpen && (
         <Controls
           entries={entries}
@@ -128,3 +132,5 @@ export default function App() {
     </div>
   );
 }
+
+export default App;

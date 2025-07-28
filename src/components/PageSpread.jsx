@@ -5,6 +5,7 @@ export default function PageSpread({
   entries,
   setEntries,
   currentPage,
+  handleImageUpload, // NEW: passed down from App.jsx for Firebase storage!
 }) {
   const [editing, setEditing] = useState({ field: null, value: "" });
   const fileInput = useRef();
@@ -24,23 +25,17 @@ export default function PageSpread({
     setEditing({ field: null, value: "" });
   }
 
-  // Handle image upload
-  function handleImageUpload(e) {
+  // Handle image upload for Firebase
+  function onFileChange(e) {
     const file = e.target.files[0];
     if (!file || !file.type.startsWith("image/")) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const updatedEntries = [...entries];
-      updatedEntries[currentPage].image = reader.result;
-      setEntries(updatedEntries);
-    };
-    reader.readAsDataURL(file);
+    // Use the provided Firebase upload handler (not FileReader)
+    if (handleImageUpload) handleImageUpload(file, currentPage);
   }
 
   // Remove image
   function removeImage() {
-    if (
-      window.confirm("Remove this image from the page? (Cannot be undone)")) {
+    if (window.confirm("Remove this image from the page? (Cannot be undone)")) {
       const updatedEntries = [...entries];
       updatedEntries[currentPage].image = "";
       setEntries(updatedEntries);
@@ -205,7 +200,7 @@ export default function PageSpread({
           ref={fileInput}
           accept="image/*"
           style={{ display: "none" }}
-          onChange={handleImageUpload}
+          onChange={onFileChange}
         />
       </div>
     </div>

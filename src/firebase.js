@@ -4,12 +4,12 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-   apiKey: "AIzaSyC-EXy1_ayThtvgOE4UtvF4WEuD0eHr9VU",
-  authDomain: "tomeofenlightenmint.firebaseapp.com",
-  projectId: "tomeofenlightenmint",
-  storageBucket: "tomeofenlightenmint.firebasestorage.app",
-  messagingSenderId: "474536124183",
-  appId: "1:474536124183:web:7762594a4a467cdc3a2152"
+     apiKey: "AIzaSyC4lve_6uPJgogpdW8KAdCwczEVyqq_fe4",
+  authDomain: "tome-of-enlighten-mint.firebaseapp.com",
+  projectId: "tome-of-enlighten-mint",
+  storageBucket: "tome-of-enlighten-mint.appspot.com",
+  messagingSenderId: "556319817663",
+  appId: "1:556319817663:web:f6f7fc025da0abdbfb2b0a"
 };
 
 const app = initializeApp(firebaseConfig);
