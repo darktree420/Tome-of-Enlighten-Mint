@@ -48,7 +48,7 @@ export default function App() {
             onClick={() => setIsOpen(true)}
             title="Open the Tome"
             style={{
-              background: "url(/Skins/Minty/closed_book.png) no-repeat center center",
+              background: "url(/Tome-of-Enlighten-Mint//Skins/Minty/closed_book.png) no-repeat center center",
               backgroundSize: "cover",
               width: 640,
               height: 640,
@@ -72,7 +72,7 @@ export default function App() {
             <div
               id="leafy-frame"
               style={{
-                background: "url(/Skins/Minty/leafy_frame.png) no-repeat center center",
+                background: "url(/Tome-of-Enlighten-Mint//Skins/Minty/leafy_frame.png) no-repeat center center",
                 backgroundSize: "cover",
                 position: "absolute",
                 width: 1150,
@@ -90,7 +90,7 @@ export default function App() {
             <div
               id="page-frame"
               style={{
-                background: "url(/Skins/Minty/open_book.png) no-repeat center center",
+                background: "url(/Tome-of-Enlighten-Mint//Skins/Minty/open_book.png) no-repeat center center",
                 backgroundSize: "contain",
                 width: 1000,
                 height: 632,
