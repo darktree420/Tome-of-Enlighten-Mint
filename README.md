@@ -44,7 +44,7 @@ Entries are stored as an array of JSON objects like:
   "date": "2025-07-23T18:42:00.000Z"
 }
 
-# React + Vite
+## React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
