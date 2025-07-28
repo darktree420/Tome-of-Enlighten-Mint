@@ -4,7 +4,7 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-     apiKey: "AIzaSyAMatTvaez5hQhc3b5DOgqTgb6j_Uk5Pa8",
+  apiKey: "AIzaSyAMatTvaez5hQhc3b5DOgqTgb6j_Uk5Pa8",
   authDomain: "mystic-tome-467312.firebaseapp.com",
   projectId: "mystic-tome-467312",
   storageBucket: "mystic-tome-467312.firebasestorage.app",
