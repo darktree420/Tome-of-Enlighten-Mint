@@ -2,12 +2,10 @@ import React, { useState, useEffect } from "react";
 import PageSpread from "./components/PageSpread";
 import Controls from "./components/Controls";
 import "./index.css";
-import { db, storage } from "./firebase";
-import { doc, setDoc, onSnapshot } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import imageCompression from 'browser-image-compression';
+import { supabase } from "./supabase";
 
-const TOME_DOC = "main"; // Name of your tome document in Firestore
+const BUCKET = "tome-images";
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,37 +13,77 @@ function App() {
   const [currentPage, setCurrentPage] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  // Real-time sync from Firestore
+ // Load Tome entries on mount
   useEffect(() => {
-    const unsub = onSnapshot(doc(db, "tomes", TOME_DOC), (docSnap) => {
-      if (docSnap.exists()) setEntries(docSnap.data().entries || []);
-      else setEntries([]);
+    (async () => {
+      setLoading(true);
+      let { data, error } = await supabase
+        .from("tomes")
+        .select("*")
+        .order("created_at", { ascending: true });
+      if (error) alert("Could not load tome: " + error.message);
+      else setEntries(data || []);
       setLoading(false);
-    });
-    return unsub;
+    })();
   }, []);
 
-  // Save to Firestore on change (except while loading initial data)
-  useEffect(() => {
-    if (!loading) {
-		console.log("Saving entries to Firestore:", entries); // <---- Add this
-      setDoc(doc(db, "tomes", TOME_DOC), { entries }, { merge: true });
-    }
-  }, [entries, loading]);
+  // Add a new page/entry
+  async function addEntry() {
+    const newEntry = {
+      question: "",
+      answer: "",
+      image: "",
+    };
+    const { data, error } = await supabase.from("tomes").insert([newEntry]).select();
+    if (error) return alert("Failed to add entry: " + error.message);
+    setEntries((old) => [...old, data[0]]);
+    setCurrentPage(entries.length); // jump to new page
+  }
+
+  // Update an entry (title/desc/image)
+  async function updateEntry(index, updated) {
+    const entry = entries[index];
+    if (!entry || !entry.id) return;
+    // Update in DB
+    const { error } = await supabase
+      .from("tomes")
+      .update(updated)
+      .eq("id", entry.id);
+    if (error) return alert("Failed to update entry: " + error.message);
+    // Update locally
+    setEntries((old) => {
+      const copy = [...old];
+      copy[index] = { ...copy[index], ...updated };
+      return copy;
+    });
+  }
 
   // Image upload handler for PageSpread
   async function handleImageUpload(file, pageIndex) {
-    const compressed = await imageCompression(file, { maxWidthOrHeight: 800, maxSizeMB: 0.3 });
-    const imgRef = ref(storage, `tome-images/${file.name}-${Date.now()}`);
-    await uploadBytes(imgRef, compressed);
-    const url = await getDownloadURL(imgRef);
+    try {
+      // Optionally compress/resize here if needed
+      const fileName = `${Date.now()}-${file.name}`;
+      const { data, error } = await supabase
+        .storage
+        .from(BUCKET)
+        .upload(fileName, file, { upsert: true });
+      if (error) return alert("Image upload error: " + error.message);
 
-    // Update entry's image URL
-    setEntries((old) => {
-      const copy = [...old];
-      copy[pageIndex] = { ...copy[pageIndex], image: url };
-      return copy;
-    });
+      // Get public URL
+      const { data: { publicUrl } } = supabase
+        .storage
+        .from(BUCKET)
+        .getPublicUrl(fileName);
+
+      await updateEntry(pageIndex, { image: publicUrl });
+    } catch (err) {
+      alert("Unexpected image upload error: " + err.message);
+    }
+  }
+
+  // Navigation
+  function goToPage(i) {
+    setCurrentPage(i);
   }
 
   // Book leafy frame style

@@ -1,16 +1,16 @@
 import React, { useState, useRef } from "react";
 
+// Receives: entry, entries, currentPage, updateEntry, handleImageUpload
 export default function PageSpread({
   entry,
   entries,
-  setEntries,
   currentPage,
+  updateEntry,
   handleImageUpload,
 }) {
   const [editing, setEditing] = useState({ field: null, value: "" });
   const fileInput = useRef();
 
-  // Defensive: Don't allow editing if entry is missing
   function startEdit(field) {
     if (!entry) return;
     setEditing({ field, value: entry[field] || "" });
@@ -21,9 +21,7 @@ export default function PageSpread({
       setEditing({ field: null, value: "" });
       return;
     }
-    const updatedEntries = [...entries];
-    updatedEntries[currentPage][editing.field] = editing.value;
-    setEntries(updatedEntries);
+    updateEntry(currentPage, { [editing.field]: editing.value });
     setEditing({ field: null, value: "" });
   }
 
@@ -37,13 +35,10 @@ export default function PageSpread({
   function removeImage() {
     if (!entry) return;
     if (window.confirm("Remove this image from the page? (Cannot be undone)")) {
-      const updatedEntries = [...entries];
-      updatedEntries[currentPage].image = "";
-      setEntries(updatedEntries);
+      updateEntry(currentPage, { image: "" });
     }
   }
 
-  // Defensive: If no entry, prompt user
   if (!entry) {
     return (
       <div style={{ padding: 32, textAlign: "center", color: "#888", fontSize: "1.2em" }}>
@@ -55,7 +50,7 @@ export default function PageSpread({
   return (
     <div id="page-frame">
       {/* Left page: Title & Description */}
-      <div className="page" style={{ position: "relative" }}>
+      <div className="page" style={{ position: "relative", width: "46%" }}>
         {/* Editable Title */}
         {editing.field === "question" ? (
           <input
@@ -141,6 +136,7 @@ export default function PageSpread({
           display: "flex",
           flexDirection: "column",
           position: "relative",
+          width: "46%"
         }}
       >
         {entry?.image ? (
