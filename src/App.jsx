@@ -13,7 +13,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState(0);
   const [loading, setLoading] = useState(true);
 
- // Load Tome entries on mount
+  // Load Tome entries on mount
   useEffect(() => {
     (async () => {
       setLoading(true);
@@ -27,10 +27,10 @@ function App() {
     })();
   }, []);
 
-  // Add a new page/entry
-  async function addEntry() {
+  // Add a new page/entry (called by Controls)
+  async function addEntry(q = "") {
     const newEntry = {
-      question: "",
+      question: q,
       answer: "",
       image_url: "",
     };
@@ -40,53 +40,78 @@ function App() {
     setCurrentPage(entries.length); // jump to new page
   }
 
+  // Add an entry with an image (called by Controls for image upload)
+  async function addImageEntry(file) {
+    // 1. Create a blank row first
+    const { data: insertData, error: insertError } = await supabase
+      .from("tomes")
+      .insert([{ question: "Image Entry", answer: "Describe this scene or leave notes here.", image_url: "" }])
+      .select();
+    if (insertError) return alert("Failed to add entry: " + insertError.message);
+
+    const newEntry = insertData[0];
+    const fileName = `${Date.now()}-${file.name}`;
+    const { error: uploadError } = await supabase
+      .storage
+      .from(BUCKET)
+      .upload(fileName, file, { upsert: true });
+    if (uploadError) return alert("Image upload error: " + uploadError.message);
+
+    const { data: { publicUrl } } = supabase
+      .storage
+      .from(BUCKET)
+      .getPublicUrl(fileName);
+
+    // 3. Update the row with image url
+    await updateEntry(entries.length, { image_url: publicUrl }, newEntry.id);
+  }
+
   // Update an entry (title/desc/image)
-  async function updateEntry(index, updated) {
-    const entry = entries[index];
+  async function updateEntry(index, updated, forcedId = null) {
+    const entry = forcedId ? entries.find(e => e.id === forcedId) : entries[index];
     if (!entry || !entry.id) return;
-    // Update in DB
     const { error } = await supabase
       .from("tomes")
       .update(updated)
       .eq("id", entry.id);
     if (error) return alert("Failed to update entry: " + error.message);
-    // Update locally
     setEntries((old) => {
       const copy = [...old];
-      copy[index] = { ...copy[index], ...updated };
+      const idx = forcedId ? old.findIndex(e => e.id === forcedId) : index;
+      if (idx !== -1) copy[idx] = { ...copy[idx], ...updated };
       return copy;
     });
   }
 
+  // Delete an entry
+  async function deleteEntry(index) {
+    const entry = entries[index];
+    if (!entry || !entry.id) return;
+    if (!window.confirm("Delete this page?")) return;
+    const { error } = await supabase.from("tomes").delete().eq("id", entry.id);
+    if (error) return alert("Failed to delete entry: " + error.message);
+    setEntries((old) => old.filter((_, idx) => idx !== index));
+    setCurrentPage((p) => Math.max(0, p - 1));
+  }
+
   // Image upload handler for PageSpread
   async function handleImageUpload(file, pageIndex) {
-    try {
-      // Optionally compress/resize here if needed
-      const fileName = `${Date.now()}-${file.name}`;
-      const { data, error } = await supabase
-        .storage
-        .from(BUCKET)
-        .upload(fileName, file, { upsert: true });
-      if (error) return alert("Image upload error: " + error.message);
-
-      // Get public URL
-      const { data: { publicUrl } } = supabase
-        .storage
-        .from(BUCKET)
-        .getPublicUrl(fileName);
-
-      await updateEntry(pageIndex, { image_url: publicUrl });
-    } catch (err) {
-      alert("Unexpected image upload error: " + err.message);
-    }
+    const entry = entries[pageIndex];
+    if (!entry || !entry.id) return;
+    const fileName = `${Date.now()}-${file.name}`;
+    const { error } = await supabase
+      .storage
+      .from(BUCKET)
+      .upload(fileName, file, { upsert: true });
+    if (error) return alert("Image upload error: " + error.message);
+    const { data: { publicUrl } } = supabase
+      .storage
+      .from(BUCKET)
+      .getPublicUrl(fileName);
+    await updateEntry(pageIndex, { image_url: publicUrl });
   }
 
-  // Navigation
-  function goToPage(i) {
-    setCurrentPage(i);
-  }
-
-  // Book leafy frame style
+  // Book leafy frame style (unchanged)
   const leafyFrameStyle = {
     background: "url(/Tome-of-Enlighten-Mint/Skins/Minty/leafy_frame.png) no-repeat center center",
     backgroundSize: "cover",
@@ -106,16 +131,16 @@ function App() {
   return (
     <div className="App" style={{ position: "relative", minHeight: "100vh" }}>
       <h1 id="tomeHeading">
-  {!isOpen ? (
-    <>The mysterious tome sits before you, the faint smell of mint hangs in the air. Do you dare to open the tome?</>
-  ) : (
-    entries.length === 0 || !entries[currentPage]?.question ? (
-      <>The blank page awaits a question...</>
-    ) : (
-      <>This page shows <span style={{ color: "#4fd", fontWeight: 600 }}>{entries[currentPage].question}</span> beautifully illustrated.</>
-    )
-  )}
-</h1>
+        {!isOpen ? (
+          <>The mysterious tome sits before you, the faint smell of mint hangs in the air. Do you dare to open the tome?</>
+        ) : (
+          entries.length === 0 || !entries[currentPage]?.question ? (
+            <>The blank page awaits a question...</>
+          ) : (
+            <>This page shows <span style={{ color: "#4fd", fontWeight: 600 }}>{entries[currentPage].question}</span> beautifully illustrated.</>
+          )
+        )}
+      </h1>
 
       <div id="book-container" style={{ position: "relative", width: 1150, height: 805 }}>
         {!isOpen && (
@@ -164,7 +189,7 @@ function App() {
                 setEntries={setEntries}
                 currentPage={currentPage}
                 handleImageUpload={handleImageUpload}
-				updateEntry={updateEntry}
+                updateEntry={updateEntry}
               />
             </div>
           </>
@@ -173,9 +198,11 @@ function App() {
       {isOpen && (
         <Controls
           entries={entries}
-          setEntries={setEntries}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
+          addEntry={addEntry}
+          addImageEntry={addImageEntry}
+          deleteEntry={deleteEntry}
         />
       )}
     </div>
