@@ -32,7 +32,7 @@ function App() {
     const newEntry = {
       question: "",
       answer: "",
-      image: "",
+      image_url: "",
     };
     const { data, error } = await supabase.from("tomes").insert([newEntry]).select();
     if (error) return alert("Failed to add entry: " + error.message);
@@ -75,7 +75,7 @@ function App() {
         .from(BUCKET)
         .getPublicUrl(fileName);
 
-      await updateEntry(pageIndex, { image: publicUrl });
+      await updateEntry(pageIndex, { image_url: publicUrl });
     } catch (err) {
       alert("Unexpected image upload error: " + err.message);
     }
@@ -164,6 +164,7 @@ function App() {
                 setEntries={setEntries}
                 currentPage={currentPage}
                 handleImageUpload={handleImageUpload}
+				updateEntry={updateEntry}
               />
             </div>
           </>

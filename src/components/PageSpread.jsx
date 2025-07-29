@@ -35,7 +35,7 @@ export default function PageSpread({
   function removeImage() {
     if (!entry) return;
     if (window.confirm("Remove this image from the page? (Cannot be undone)")) {
-      updateEntry(currentPage, { image: "" });
+      updateEntry(currentPage, { image_url: "" });
     }
   }
 
@@ -139,11 +139,11 @@ export default function PageSpread({
           width: "46%"
         }}
       >
-        {entry?.image ? (
+        {entry?.image_url ? (
           <div style={{ position: "relative", width: "100%" }}>
             <img
               id="page-image"
-              src={entry.image}
+              src={entry.image_url}
               alt="Tome Illustration"
               style={{
                 width: "100%",
