@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import PageSpread from "./components/PageSpread";
+import PageSpread from "./components/PageSpread";  
+import BookSpread from "./components/BookSpread";
 import Controls from "./components/Controls";
 import "./index.css";
-import imageCompression from 'browser-image-compression';
 import { supabase } from "./supabase";
 
 const BUCKET = "tome-images";
@@ -27,7 +27,7 @@ function App() {
     })();
   }, []);
 
-  // Add a new page/entry (called by Controls)
+  // Add a new text entry
   async function addEntry(q = "") {
     const newEntry = {
       question: q,
@@ -37,12 +37,11 @@ function App() {
     const { data, error } = await supabase.from("tomes").insert([newEntry]).select();
     if (error) return alert("Failed to add entry: " + error.message);
     setEntries((old) => [...old, data[0]]);
-    setCurrentPage(entries.length); // jump to new page
+    setCurrentPage(entries.length);
   }
 
-  // Add an entry with an image (called by Controls for image upload)
+  // Add a new entry with image (creates row, then uploads image)
   async function addImageEntry(file) {
-    // 1. Create a blank row first
     const { data: insertData, error: insertError } = await supabase
       .from("tomes")
       .insert([{ question: "Image Entry", answer: "Describe this scene or leave notes here.", image_url: "" }])
@@ -62,11 +61,10 @@ function App() {
       .from(BUCKET)
       .getPublicUrl(fileName);
 
-    // 3. Update the row with image url
     await updateEntry(entries.length, { image_url: publicUrl }, newEntry.id);
   }
 
-  // Update an entry (title/desc/image)
+  // Update any entry
   async function updateEntry(index, updated, forcedId = null) {
     const entry = forcedId ? entries.find(e => e.id === forcedId) : entries[index];
     if (!entry || !entry.id) return;
@@ -83,7 +81,7 @@ function App() {
     });
   }
 
-  // Delete an entry
+  // Delete entry
   async function deleteEntry(index) {
     const entry = entries[index];
     if (!entry || !entry.id) return;
@@ -94,7 +92,7 @@ function App() {
     setCurrentPage((p) => Math.max(0, p - 1));
   }
 
-  // Image upload handler for PageSpread
+  // Handle image upload (replace image for existing entry)
   async function handleImageUpload(file, pageIndex) {
     const entry = entries[pageIndex];
     if (!entry || !entry.id) return;
@@ -110,21 +108,6 @@ function App() {
       .getPublicUrl(fileName);
     await updateEntry(pageIndex, { image_url: publicUrl });
   }
-
-  // Book leafy frame style (unchanged)
-  const leafyFrameStyle = {
-    background: "url(/Tome-of-Enlighten-Mint/Skins/Minty/leafy_frame.png) no-repeat center center",
-    backgroundSize: "cover",
-    position: "absolute",
-    width: 1150,
-    height: 805,
-    left: 0,
-    top: 0,
-    zIndex: 1,
-    pointerEvents: "none",
-    userSelect: "none",
-    display: isOpen ? "block" : "none"
-  };
 
   if (loading) return <div>Loading the Tome of Enlighten-Mint...</div>;
 
@@ -142,7 +125,7 @@ function App() {
         )}
       </h1>
 
-      <div id="book-container" style={{ position: "relative", width: 1150, height: 805 }}>
+      <div id="book-container">
         {!isOpen && (
           <div
             id="closed-book"
@@ -163,36 +146,32 @@ function App() {
           />
         )}
         {isOpen && (
-          <>
-            <div id="leafy-frame" style={leafyFrameStyle} />
-            <div
-              id="page-frame"
-              style={{
-                background: "url(/Tome-of-Enlighten-Mint/Skins/Minty/open_book.png) no-repeat center center",
-                backgroundSize: "contain",
-                width: 1000,
-                height: 632,
-                position: "absolute",
-                left: "50%",
-                top: "50%",
-                transform: "translate(-50%, -50%)",
-                display: "flex",
-                gap: 20,
-                padding: 40,
-                boxSizing: "border-box",
-                zIndex: 2,
-              }}
-            >
+          <div id="page-frame">
+            {/* Left Side */}
+            <div className="book-side left">
+              <span className="leafy-frame left"></span>
               <PageSpread
                 entry={entries[currentPage]}
                 entries={entries}
-                setEntries={setEntries}
                 currentPage={currentPage}
-                handleImageUpload={handleImageUpload}
                 updateEntry={updateEntry}
+                handleImageUpload={handleImageUpload}
+                side="left"
               />
             </div>
-          </>
+            {/* Right Side */}
+            <div className="book-side right">
+              <span className="leafy-frame right"></span>
+              <PageSpread
+                entry={entries[currentPage]}
+                entries={entries}
+                currentPage={currentPage}
+                updateEntry={updateEntry}
+                handleImageUpload={handleImageUpload}
+                side="right"
+              />
+            </div>
+          </div>
         )}
       </div>
       {isOpen && (

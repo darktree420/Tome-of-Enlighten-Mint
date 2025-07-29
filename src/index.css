@@ -1,245 +1,249 @@
-:root {
-  /* Default/Minty Theme Variables */
-  --book-bg-closed: url('/Skins/Minty/closed_book.png');
-  --book-bg-open: url('/Skins/Minty/open_book.png');
-  --book-bg-frame: url('/Skins/Minty/leafy_frame.png');
-  --book-width: 1150px;
-  --book-height: 805px;
-  --page-frame-width: 1000px;
-  --page-frame-height: 632px;
-  --accent-color: #3aff80;
-  --page-bg: rgba(0, 30, 0, 0.18);
-  --font-family: 'Georgia', serif;
-  --text-color: #d2f5ce;
-  --shadow-color: rgba(0,255,127,0.5);
-}
-
-body {
-  background: radial-gradient(circle at center, #1b1f1b, #0d0f0d);
-  color: var(--text-color);
-  font-family: var(--font-family);
+body, html {
   margin: 0;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  padding: 0;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  background: #141b15;
   min-height: 100vh;
 }
 
 #tomeHeading {
   text-align: center;
-  margin-bottom: 20px;
-  font-size: 1.2em;
-  max-width: 90%;
+  font-size: 1.4em;
+  color: #bcffe4;
+  margin: 32px 0 0 0;
+  letter-spacing: 0.03em;
+  text-shadow: 0 1px 18px #3ae6a7bb;
 }
 
 #book-container {
-  position: relative;
-  width: var(--book-width);
-  height: var(--book-height);
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: flex-start;
+  min-height: 720px;
+  position: relative;
+  width: 100%;
   margin: 0 auto;
 }
 
-/* Closed Book */
 #closed-book {
-  background: var(--book-bg-closed) no-repeat center center;
-  background-size: cover;
-  width: 640px;
-  height: 640px;
-  cursor: pointer;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 2;
-  transition: opacity 0.4s;
-  box-shadow: 0 0 40px var(--shadow-color);
+  box-shadow: 0 12px 48px #0b41255c, 0 1px 24px #26ef99;
+  border-radius: 22px;
+  transition: box-shadow 0.2s, transform 0.22s;
 }
-
-/* Open Book Layout */
-#leafy-frame {
-  background: var(--book-bg-frame) no-repeat center center;
-  background-size: cover;
-  position: absolute;
-  width: var(--book-width);
-  height: var(--book-height);
-  left: 0;
-  top: 0;
-  z-index: 1;
-  pointer-events: none;
-  user-select: none;
-  display: block;
-  filter: drop-shadow(0 0 60px #3aff80cc);
+#closed-book:hover {
+  box-shadow: 0 32px 64px #2fd78098, 0 1px 32px #22d87f;
+  transform: scale(1.025) rotate(-2deg);
 }
 
 #page-frame {
-  background: var(--book-bg-open) no-repeat center center;
-  background-size: contain;
-  width: var(--page-frame-width);
-  height: var(--page-frame-height);
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
   display: flex;
-  gap: 20px;
-  padding: 40px;
-  box-sizing: border-box;
-  z-index: 2;
+  flex-direction: row;
+  justify-content: center;
+  align-items: stretch;
+  position: relative;
+  width: 1150px;
+  min-height: 805px;
+  margin: 0 auto;
+  user-select: none;
 }
 
-/* Page panels (both left and right) */
+.book-side {
+  position: relative;
+  width: 50%;
+  min-width: 0;
+  min-height: 805px;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  overflow: visible;
+  z-index: 1;
+}
+
+.book-side.left .leafy-frame.left,
+.book-side.right .leafy-frame.right {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  z-index: 2;
+  pointer-events: none;
+  user-select: none;
+}
+
+.book-side.left .leafy-frame.left {
+  background: url("/Tome-of-Enlighten-Mint/Skins/Minty/leafy_frame_left.png") no-repeat center center;
+}
+.book-side.right .leafy-frame.right {
+  background: url("/Tome-of-Enlighten-Mint/Skins/Minty/leafy_frame_right.png") no-repeat center center;
+}
+
+.book-side.left:before,
+.book-side.right:before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  z-index: 1;
+  opacity: 1;
+  pointer-events: none;
+  user-select: none;
+}
+.book-side.left:before {
+  background-image: url("/Tome-of-Enlighten-Mint/Skins/Minty/open_book_left.png");
+}
+.book-side.right:before {
+  background-image: url("/Tome-of-Enlighten-Mint/Skins/Minty/open_book_right.png");
+}
+
 .page {
-  flex: 1;
+  position: relative;
+  width: 96%;
+  min-height: 620px;
+  margin: 0 auto;
+  padding: 48px 36px 40px 36px;
+  background: none;
+  z-index: 3;
   display: flex;
   flex-direction: column;
-  background: var(--page-bg);
-  border-radius: 6px;
-  padding: 12px;
-  overflow-y: auto;
-  box-shadow: inset 0 0 10px var(--shadow-color);
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.page-content {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  z-index: 3;
 }
 
 #page-question {
-  font-size: 1.2em;
   font-weight: bold;
+  font-size: 1.2em;
   margin-bottom: 8px;
+  color: #3affb2;
 }
 #page-prompt {
   font-size: 1em;
   white-space: pre-wrap;
+  margin-bottom: 16px;
+  color: #caf8e6;
 }
 #page-image {
   width: 100%;
-  height: auto;
-  border-radius: 6px;
-  box-shadow: 0 0 15px rgba(60,255,130,0.2);
-  margin-top: 8px;
+  max-height: 390px;
   object-fit: contain;
-  max-height: 420px;
-  background: rgba(0,0,0,0.04);
+  border-radius: 9px;
+  margin-top: 16px;
+  box-shadow: 0 0 18px #53ffaa4d;
 }
 
-/* Controls */
-#controls {
-  margin-top: 20px;
+#controls-bar {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
   justify-content: center;
-}
-
-textarea {
-  width: 300px;
-  height: 80px;
-  resize: none;
-  font-family: var(--font-family);
-  font-size: 14px;
-  background-color: #1f2d1f;
-  color: var(--text-color);
-  border: 1px solid var(--accent-color);
-  border-radius: 4px;
-  padding: 8px;
-}
-button {
-  padding: 8px 12px;
-  font-size: 14px;
-  background: linear-gradient(to bottom, var(--accent-color), #1c7f46);
-  color: #061006;
-  border: 2px solid #1c7f46;
-  border-radius: 6px;
-  cursor: pointer;
-  font-family: var(--font-family);
-  text-shadow: 0 0 3px #b2ffc2;
-  box-shadow: 0 0 5px var(--shadow-color);
-  transition: all 0.2s ease-in-out;
-}
-button:hover {
-  background: linear-gradient(to bottom, #2ae069, #145a33);
-  transform: scale(1.05);
-  box-shadow: 0 0 10px var(--shadow-color);
-}
-
-/* Responsive tweaks */
-@media (max-width: 1200px) {
-  #book-container {
-    width: 95vw;
-    height: auto;
-    min-width: 0;
-  }
-  #leafy-frame, #page-frame {
-    width: 98vw;
-    max-width: 98vw;
-    min-width: 320px;
-  }
-}
-		  #controls-bar {
-  width: 98vw;
-  max-width: 1150px;
-  margin: 25px auto 0 auto;
-  padding: 10px 0;
-  background: rgba(35, 44, 38, 0.90);
-  border-radius: 0 0 16px 16px;
-  box-shadow: 0 12px 30px -10px #3aff8090 inset, 0 2px 8px #0e2011;
-  display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  z-index: 100;
+  gap: 10px;
+  background: rgba(32, 44, 34, 0.93);
+  box-shadow: 0 1px 18px #44ffd77e;
+  border-radius: 16px;
+  padding: 14px 22px;
+  margin: 28px auto 0 auto;
+  width: fit-content;
+  position: relative;
+  z-index: 10;
 }
-#controls-bar textarea {
-  font-family: 'Georgia', serif;
-  font-size: 14px;
-  background-color: #1f2d1f;
-  color: #d2f5ce;
-  border: 1px solid #3aff80;
-  border-radius: 4px;
-  padding: 8px;
-  margin: 0 6px;
-}
-#controls-bar button, #controls-bar label {
-  padding: 7px 14px;
-  background: linear-gradient(to bottom, #3aff80, #145a33);
-  color: #061006;
-  border: 1.5px solid #1c7f46;
-  border-radius: 6px;
+#controls-bar button {
+  background: linear-gradient(90deg, #39e6b2 0%, #12b373 100%);
+  color: #0a2730;
+  border: none;
+  border-radius: 7px;
+  padding: 6px 14px;
+  font-weight: bold;
+  font-size: 1em;
   cursor: pointer;
-  font-family: 'Georgia', serif;
-  font-size: 14px;
-  margin: 0 2px;
-  box-shadow: 0 0 4px #3aff8044;
-  transition: background 0.18s, box-shadow 0.18s;
-  text-shadow: 0 0 2px #b2ffc2;
-  vertical-align: middle;
+  transition: background 0.18s, box-shadow 0.13s, transform 0.13s;
+  margin: 0 3px;
+  box-shadow: 0 2px 8px #48ffb122;
 }
 #controls-bar button:disabled {
-  opacity: 0.3;
+  opacity: 0.5;
   cursor: not-allowed;
 }
-#controls-bar label {
-  cursor: pointer;
+#controls-bar textarea {
+  border-radius: 6px;
+  padding: 5px;
+  border: 1px solid #4ae8c8;
+  font-size: 1em;
+  background: #dffcf6;
+  resize: none;
 }
-#controls-bar input[type="file"] {
+
+.tome-loading {
+  text-align: center;
+  color: #b9fff7;
+  margin-top: 40px;
+  font-size: 1.3em;
+  font-style: italic;
+}
+
+/* Hide scrollbars for book pages */
+#page-frame::-webkit-scrollbar,
+.page::-webkit-scrollbar {
   display: none;
 }
-#controls-bar button:hover, #controls-bar label:hover {
-  background: linear-gradient(to bottom, #1fa860, #073d21);
-  box-shadow: 0 0 10px #3aff8099;
+
+@media (max-width: 900px) {
+  #book-container {
+    min-height: 80vh;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100vw;
+    padding-bottom: 70px;
+  }
+  #page-frame {
+    flex-direction: column;
+    width: 96vw;
+    min-width: 0;
+    min-height: unset;
+    height: unset;
+  }
+  .book-side {
+    width: 100vw;
+    min-width: 0;
+    min-height: 380px;
+    margin: 0;
+    height: unset;
+  }
+  .page {
+    min-height: 280px;
+    padding: 18px 6vw 16px 6vw;
+  }
+  .book-side.left .leafy-frame.left {
+    background: url("/Tome-of-Enlighten-Mint/Skins/Minty/leafy_frame_left.png") no-repeat top center;
+    background-size: 100% auto;
+  }
+  .book-side.right .leafy-frame.right {
+    background: url("/Tome-of-Enlighten-Mint/Skins/Minty/leafy_frame_right.png") no-repeat top center;
+    background-size: 100% auto;
+  }
+  .book-side.left:before {
+    background-image: url("/Tome-of-Enlighten-Mint/Skins/Minty/open_book_left.png");
+    background-size: 100% auto;
+  }
+  .book-side.right:before {
+    background-image: url("/Tome-of-Enlighten-Mint/Skins/Minty/open_book_right.png");
+    background-size: 100% auto;
+  }
 }
 
-/* Alternate Theme Example */
-.demonic {
-  --book-bg-closed: url('/Skins/Demonic/closed_book.png');
-  --book-bg-open: url('/Skins/Demonic/open_book.png');
-  --book-bg-frame: url('/Skins/Demonic/leafy_frame.png');
-  --accent-color: #ff2222;
-  --text-color: #ffeaea;
-  --page-bg: rgba(40, 0, 0, 0.21);
-  --shadow-color: rgba(255,0,40,0.44);
+/* For super-small screens: */
+@media (max-width: 600px) {
+  .page {
+    padding: 8vw 2vw 10vw 2vw;
+  }
 }
-
-/* Add more themes as needed! */

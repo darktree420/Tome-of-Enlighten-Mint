@@ -1,13 +1,14 @@
 NOTICE: Visual Assets & Attribution
 
-The artwork used in this project (open_book.png, closed_book.png, book_icon.png)
+The artwork used in this project (leafy_frame_right.png, leafy_frame_left.png, open_book_left.png, open_book_left.png, closed_book.png, book_icon.png)
 was created using AI image generation tools.
 
-These assets were generated and refined by Lord Rulebender for personal use in the
-Tome of Enlighten-Mint project. They are provided for non-commercial use only.
+These assets were generated and refined darktree420 for personal use in the
+Tome of Enlighten-Mint project. They are provided for non-commercial use only and
+are NOT licensed under the repository’s MIT License.
 
 If you wish to use these assets in your own project, modification, or distribution,
-please contact the original creator or generate your own variations using similar tools.
+please contact the original creator (GitHub: darktree420) or generate your own variations.
 
 All code is MIT-licensed. Art assets remain protected and should not be resold or
 used in commercial projects without permission.

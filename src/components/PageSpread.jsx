@@ -1,12 +1,13 @@
 import React, { useState, useRef } from "react";
 
-// Receives: entry, entries, currentPage, updateEntry, handleImageUpload
+// Receives: entry, entries, currentPage, updateEntry, handleImageUpload, side ("left" or "right")
 export default function PageSpread({
   entry,
   entries,
   currentPage,
   updateEntry,
   handleImageUpload,
+  side = "left"
 }) {
   const [editing, setEditing] = useState({ field: null, value: "" });
   const fileInput = useRef();
@@ -42,15 +43,15 @@ export default function PageSpread({
   if (!entry) {
     return (
       <div style={{ padding: 32, textAlign: "center", color: "#888", fontSize: "1.2em" }}>
-        <div>No page loaded.<br />Add a new page to begin, or use the arrows below to navigate.</div>
+        No page loaded.<br />Add a new page to begin, or use the arrows below to navigate.
       </div>
     );
   }
 
-  return (
-    <div id="page-frame">
-      {/* Left page: Title & Description */}
-      <div className="page" style={{ position: "relative", width: "46%" }}>
+  if (side === "left") {
+    // Render Title + Description only
+    return (
+      <div className="page" style={{ position: "relative", width: "100%", minHeight: 300 }}>
         {/* Editable Title */}
         {editing.field === "question" ? (
           <input
@@ -63,7 +64,7 @@ export default function PageSpread({
               fontWeight: "bold",
               fontSize: "1.2em",
               marginBottom: 8,
-              width: "100%",
+              width: "100%"
             }}
             maxLength={100}
           />
@@ -77,7 +78,7 @@ export default function PageSpread({
               cursor: "pointer",
               transition: "background 0.2s",
               borderRadius: "4px",
-              padding: "2px 4px",
+              padding: "2px 4px"
             }}
             onClick={() => startEdit("question")}
             title="Click to edit title"
@@ -102,7 +103,7 @@ export default function PageSpread({
               whiteSpace: "pre-wrap",
               marginTop: 3,
               borderRadius: "3px",
-              padding: "6px",
+              padding: "6px"
             }}
             autoFocus
             maxLength={1000}
@@ -115,7 +116,7 @@ export default function PageSpread({
               whiteSpace: "pre-wrap",
               cursor: "pointer",
               padding: "2px 4px",
-              minHeight: "60px",
+              minHeight: "60px"
             }}
             onClick={() => startEdit("answer")}
             title="Click to edit description"
@@ -127,88 +128,83 @@ export default function PageSpread({
           </div>
         )}
       </div>
-      {/* Right page: Image */}
-      <div
-        className="page"
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          display: "flex",
-          flexDirection: "column",
-          position: "relative",
-          width: "46%"
-        }}
-      >
-        {entry?.image_url ? (
-          <div style={{ position: "relative", width: "100%" }}>
-            <img
-              id="page-image"
-              src={entry.image_url}
-              alt="Tome Illustration"
-              style={{
-                width: "100%",
-                borderRadius: 6,
-                boxShadow: "0 0 15px rgba(60,255,130,0.25)",
-                marginTop: 8,
-                objectFit: "contain",
-                maxHeight: 420,
-                background: "rgba(0,0,0,0.04)",
-                cursor: "pointer",
-                transition: "box-shadow 0.2s",
-              }}
-              title="Click to replace image"
-              onClick={() => fileInput.current.click()}
-              tabIndex={0}
-              onKeyDown={e => e.key === "Enter" && fileInput.current.click()}
-            />
-            <button
-              onClick={removeImage}
-              title="Remove image"
-              style={{
-                position: "absolute",
-                top: 12,
-                right: 16,
-                background: "rgba(30,0,0,0.65)",
-                color: "#fff",
-                border: "none",
-                borderRadius: "50%",
-                fontSize: "1.1em",
-                width: "28px",
-                height: "28px",
-                cursor: "pointer",
-                zIndex: 10,
-              }}
-            >🗑️</button>
-          </div>
-        ) : (
-          <div
+    );
+  }
+
+  // RIGHT: Only show image upload/preview
+  return (
+    <div className="page" style={{
+      width: "100%",
+      minHeight: 300,
+      background: "none",
+      boxShadow: "none",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center"
+    }}>
+      {entry.image_url ? (
+        <div style={{ width: "100%" }}>
+          <img
+            id="page-image"
+            src={entry.image_url}
+            alt="Tome Illustration"
             style={{
-              color: "#8f8",
-              fontStyle: "italic",
-              fontSize: "1em",
-              textAlign: "center",
-              width: "90%",
+              width: "100%",
+              borderRadius: 6,
+              boxShadow: "0 0 15px rgba(60,255,130,0.25)",
+              marginTop: 8,
+              objectFit: "contain",
+              maxHeight: 420,
+              background: "rgba(0,0,0,0.04)",
               cursor: "pointer",
-              marginTop: 24,
+              transition: "box-shadow 0.2s"
             }}
+            title="Click to replace image"
             onClick={() => fileInput.current.click()}
-            title="Click to upload image"
             tabIndex={0}
             onKeyDown={e => e.key === "Enter" && fileInput.current.click()}
-          >
-            <span style={{ fontSize: "2.1em" }}>+</span> <br />
-            Click to add an image!
-          </div>
-        )}
-        {/* Hidden file input */}
-        <input
-          type="file"
-          ref={fileInput}
-          accept="image/*"
-          style={{ display: "none" }}
-          onChange={onFileChange}
-        />
-      </div>
+          />
+          <button
+            title="Remove image"
+            style={{
+              background: "rgba(40,60,40,0.8)",
+              color: "#6f6",
+              border: "none",
+              borderRadius: 4,
+              padding: "2px 8px",
+              cursor: "pointer",
+              marginTop: 4
+            }}
+            onClick={removeImage}
+          >🗑️</button>
+        </div>
+      ) : (
+        <div
+          style={{
+            color: "#8f8",
+            fontStyle: "italic",
+            fontSize: "1em",
+            textAlign: "center",
+            width: "90%",
+            cursor: "pointer",
+            marginTop: 24
+          }}
+          onClick={() => fileInput.current.click()}
+          title="Click to upload image"
+          tabIndex={0}
+          onKeyDown={e => e.key === "Enter" && fileInput.current.click()}
+        >
+          <span style={{ fontSize: "2.1em" }}>+</span> <br />
+          Click to add an image!
+        </div>
+      )}
+      <input
+        type="file"
+        ref={fileInput}
+        accept="image/*"
+        style={{ display: "none" }}
+        onChange={onFileChange}
+      />
     </div>
   );
 }
