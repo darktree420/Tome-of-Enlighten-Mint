@@ -268,42 +268,32 @@ body, html {
 /* ---- Responsive for Mobile ---- */
 
 @media (max-width: 900px) {
-  #book-container {
-    min-height: 80vh;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    width: 100vw;
-    padding-bottom: 70px;
-  }
   #page-frame {
-    flex-direction: column;
-    width: 96vw;
-    min-width: 0;
-    min-height: unset;
-    height: unset;
+    display: flex;            /* keep row layout */
+    flex-direction: row;      
+    overflow-x: auto;         /* allow horizontal scroll */
+    scroll-snap-type: x mandatory;
+    padding-bottom: 0;
   }
+
   .book-side {
-    width: 100vw;
-    min-width: 0;
-    min-height: 380px;
-    margin: 0;
-    height: unset;
+    flex: 0 0 80vw;           /* each half is 80% of viewport width */
+    scroll-snap-align: start; /* snap to page edges */
+    height: auto;
   }
-  .page {
-    min-height: 280px;
-    padding: 18px 6vw 16px 6vw;
+  .book-side::before {
+    background-size: contain; /* preserve aspect ratio */
+    height: auto;
   }
- 
-  .book-side.left:before {
-    background-image: url("/Tome-of-Enlighten-Mint/Skins/Minty/open_book_left.png");
-    background-size: 100% auto;
-  }
-  .book-side.right:before {
-    background-image: url("/Tome-of-Enlighten-Mint/Skins/Minty/open_book_right.png");
-    background-size: 100% auto;
+  .book-side .page {
+    width: 75vw;              /* adjust your insets for mobile */
+    left: 5vw;
+    right: 5vw;
+    top: 10vh;
+    bottom: 10vh;
   }
 }
+
 @media (max-width: 600px) {
   .page {
     padding: 8vw 2vw 10vw 2vw;
