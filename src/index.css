@@ -268,29 +268,34 @@ body, html {
 /* ---- Responsive for Mobile ---- */
 
 @media (max-width: 900px) {
+  /* stack your two “book sides” vertically */
   #page-frame {
-    display: flex;            /* keep row layout */
-    flex-direction: row;      
-    overflow-x: auto;         /* allow horizontal scroll */
-    scroll-snap-type: x mandatory;
-    padding-bottom: 0;
+    display: block;      /* overrides the flex row */
+    width: 100vw;
+    margin: 0 auto;
+    padding: 0 0 20px;   /* space under the bottom page before the controls */
   }
 
   .book-side {
-    flex: 0 0 80vw;           /* each half is 80% of viewport width */
-    scroll-snap-align: start; /* snap to page edges */
+    position: relative;
+    width: 90vw;         /* leave a little gutter left/right */
+    max-width: 500px;    /* optional cap if you want */
+    margin: 0 auto 30px; /* center each page and separate them */
     height: auto;
   }
+
   .book-side::before {
-    background-size: contain; /* preserve aspect ratio */
-    height: auto;
+    background-size: contain;
+    background-position: center top;
+    height: auto;        /* let image size itself to width */
+    padding-top: 80%;    /* approximate aspect ratio (h/w×100%) */
   }
+
+  /* tweak your “page” overlay to each leaf-frame on mobile */
   .book-side .page {
-    width: 75vw;              /* adjust your insets for mobile */
-    left: 5vw;
-    right: 5vw;
-    top: 10vh;
-    bottom: 10vh;
+    position: absolute;
+    inset: 12% 8% 10% 8%;  /* top/right/bottom/left as % of container */
+    overflow-y: auto;
   }
 }
 
