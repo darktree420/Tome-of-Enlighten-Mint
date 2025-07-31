@@ -109,20 +109,17 @@ function App() {
     await updateEntry(pageIndex, { image_url: publicUrl });
   }
 
-  if (loading) return <div>Loading the Tome of Enlighten-Mint...</div>;
+   if (loading) return <div className="tome-loading">Loading the Tome of Enlighten-Mint...</div>;
 
   return (
-    <div className="App" style={{ position: "relative", minHeight: "100vh" }}>
+    <div className="App">
       <h1 id="tomeHeading">
-        {!isOpen ? (
-          <>The mysterious tome sits before you, the faint smell of mint hangs in the air. Do you dare to open the tome?</>
-        ) : (
-          entries.length === 0 || !entries[currentPage]?.question ? (
-            <>The blank page awaits a question...</>
-          ) : (
-            <>This page shows <span style={{ color: "#4fd", fontWeight: 600 }}>{entries[currentPage].question}</span> beautifully illustrated.</>
-          )
-        )}
+        {!isOpen
+          ? "The mysterious tome sits before you, the faint smell of mint hangs in the air. Do you dare to open(click) the tome?"
+          : entries.length === 0 || !entries[currentPage]?.question
+          ? "The blank page awaits a question..."
+          : <>This page shows <span className="highlight">{entries[currentPage].question}</span> beautifully illustrated.</>
+        }
       </h1>
 
       <div id="book-container">
@@ -130,18 +127,6 @@ function App() {
           <div
             id="closed-book"
             onClick={() => setIsOpen(true)}
-            style={{
-              background: "url(/Tome-of-Enlighten-Mint/Skins/Minty/closed_book.png) no-repeat center center",
-              backgroundSize: "cover",
-              width: 640,
-              height: 640,
-              cursor: "pointer",
-              position: "absolute",
-              left: "50%",
-              top: "50%",
-              transform: "translate(-50%, -50%)",
-              zIndex: 2,
-            }}
             title="Open the Tome"
           />
         )}
@@ -149,7 +134,6 @@ function App() {
           <div id="page-frame">
             {/* Left Side */}
             <div className="book-side left">
-              <span className="leafy-frame left"></span>
               <PageSpread
                 entry={entries[currentPage]}
                 entries={entries}
@@ -161,7 +145,6 @@ function App() {
             </div>
             {/* Right Side */}
             <div className="book-side right">
-              <span className="leafy-frame right"></span>
               <PageSpread
                 entry={entries[currentPage]}
                 entries={entries}

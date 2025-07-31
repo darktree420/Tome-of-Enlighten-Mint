@@ -64,9 +64,9 @@ export default function PageSpread({
               fontWeight: "bold",
               fontSize: "1.2em",
               marginBottom: 8,
-              width: "100%"
+              width: "390px"
             }}
-            maxLength={100}
+            maxLength={38}
           />
         ) : (
           <div
@@ -86,7 +86,7 @@ export default function PageSpread({
             onKeyDown={e => e.key === "Enter" && startEdit("question")}
           >
             {entry?.question || <span style={{ color: "#888" }}>Click to add a title...</span>}
-            <span style={{ fontSize: "0.9em", marginLeft: 6, color: "#6f6", verticalAlign: "middle" }}>✏️</span>
+           
           </div>
         )}
 
@@ -96,14 +96,16 @@ export default function PageSpread({
             value={editing.value}
             onChange={e => setEditing({ ...editing, value: e.target.value })}
             onBlur={finishEdit}
-            rows={6}
+            rows={20}
             style={{
               fontSize: "1em",
-              width: "100%",
+              width: "390px",
               whiteSpace: "pre-wrap",
               marginTop: 3,
               borderRadius: "3px",
-              padding: "6px"
+              padding: "6px",
+			  maxHeight:   "calc(20 * 2em + 25px)", // 20 lines × 1em + 2×6px padding
+			  overflowY:   "auto"
             }}
             autoFocus
             maxLength={1000}
@@ -114,6 +116,7 @@ export default function PageSpread({
             style={{
               fontSize: "1em",
               whiteSpace: "pre-wrap",
+			  width: "390px",
               cursor: "pointer",
               padding: "2px 4px",
               minHeight: "60px"
@@ -124,7 +127,7 @@ export default function PageSpread({
             onKeyDown={e => e.key === "Enter" && startEdit("answer")}
           >
             {entry?.answer || <span style={{ color: "#888" }}>Click to add a description...</span>}
-            <span style={{ fontSize: "0.9em", marginLeft: 6, color: "#6f6", verticalAlign: "middle" }}>✏️</span>
+            
           </div>
         )}
       </div>
@@ -134,7 +137,7 @@ export default function PageSpread({
   // RIGHT: Only show image upload/preview
   return (
     <div className="page" style={{
-      width: "100%",
+      width: "80%",
       minHeight: 300,
       background: "none",
       boxShadow: "none",
@@ -149,12 +152,12 @@ export default function PageSpread({
             src={entry.image_url}
             alt="Tome Illustration"
             style={{
-              width: "100%",
+              width: "90%",
               borderRadius: 6,
               boxShadow: "0 0 15px rgba(60,255,130,0.25)",
               marginTop: 8,
               objectFit: "contain",
-              maxHeight: 420,
+              maxHeight: 500,
               background: "rgba(0,0,0,0.04)",
               cursor: "pointer",
               transition: "box-shadow 0.2s"
